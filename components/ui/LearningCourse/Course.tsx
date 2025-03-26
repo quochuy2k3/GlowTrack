@@ -1,18 +1,11 @@
-import React, { useContext, useState } from "react";
-import {
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  View,
-  Platform,
-} from "react-native";
-import variables from "@/theme/commonColor";
-import Checkbox from "../../../assets/svgs/Checkbox";
-import CheckboxActive from "../../../assets/svgs/CheckboxActive";
-import { useTranslation } from "react-i18next";
-import utils from "@/utils";
-import { router } from "expo-router";
+import React, { useContext, useState } from 'react';
+import { Image, StyleSheet, TouchableOpacity, Text, View, Platform } from 'react-native';
+import variables from '@/theme/commonColor';
+import Checkbox from '../../../assets/svgs/Checkbox';
+import CheckboxActive from '../../../assets/svgs/CheckboxActive';
+import { useTranslation } from 'react-i18next';
+import utils from '@/utils';
+import { router } from 'expo-router';
 
 type IPropsCourse = {
   course: any;
@@ -21,13 +14,7 @@ type IPropsCourse = {
   isCheckbox: boolean;
   disabled?: boolean;
 };
-const Course = ({
-  course,
-  onCheckboxChange,
-  isLastItem,
-  isCheckbox,
-  disabled,
-}: IPropsCourse) => {
+const Course = ({ course, onCheckboxChange, isLastItem, isCheckbox, disabled }: IPropsCourse) => {
   const [isChecked, setIsChecked] = useState(disabled || false);
   const { t } = useTranslation();
   const handleCheckboxClick = () => {
@@ -38,7 +25,7 @@ const Course = ({
 
   const imageSource = course?.coverImageUrl
     ? { uri: course?.coverImageUrl }
-    : require("@/assets/images/tanca_elearning_logo.e92fad6a61c7388e4df6.jpg");
+    : require('@/assets/images/tanca_elearning_logo.e92fad6a61c7388e4df6.jpg');
 
   if (!course) {
     return null;
@@ -46,7 +33,7 @@ const Course = ({
 
   const onClickDetail = (courseId: string): void => {
     router.push({
-      pathname: "/courses/detail/[id]",
+      pathname: '/courses/detail/[id]',
       params: { id: courseId },
     });
   };
@@ -60,9 +47,7 @@ const Course = ({
         <Image source={imageSource} style={styles.image} resizeMode="cover" />
         {course?.duration ? (
           <View style={styles.durationBadge}>
-            <Text style={styles.durationText}>
-              {utils.formatTime(course?.duration)}
-            </Text>
+            <Text style={styles.durationText}>{utils.formatTime(course?.duration)}</Text>
           </View>
         ) : null}
       </View>
@@ -73,7 +58,7 @@ const Course = ({
           {course?.title}
         </Text>
         <Text style={styles.source}>
-          {course?.totalParticipants || 0} {t("learners")}
+          {course?.totalParticipants || 0} {t('learners')}
         </Text>
       </View>
 
@@ -89,54 +74,54 @@ const Course = ({
 
 const styles = StyleSheet.create({
   card: {
-    flexDirection: "row",
-    shadowColor: "#000",
+    flexDirection: 'row',
+    shadowColor: '#000',
     shadowOffset: { width: 2, height: variables.scale(4) },
     shadowOpacity: 0.1,
     shadowRadius: variables.scale(12),
     marginTop: variables.scale(32),
     paddingBottom: variables.scale(40),
     borderBottomWidth: 1,
-    borderBottomColor: "#F5F5F7",
+    borderBottomColor: '#F5F5F7',
   },
   imageContainer: {
     width: variables.scale(190),
     height: variables.scale(100),
     marginRight: variables.scale(16),
-    position: "relative",
-    shadowColor: "#000",
+    position: 'relative',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 0.1,
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
     ...Platform.select({
       android: {
         elevation: 1,
         borderRadius: variables.scale(14),
-        backgroundColor: "#fff",
+        backgroundColor: '#fff',
       },
     }),
   },
   image: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
     borderRadius: variables.scale(10),
-    resizeMode: "cover",
+    resizeMode: 'cover',
   },
   durationBadge: {
-    position: "absolute",
+    position: 'absolute',
     bottom: variables.scale(5),
     right: variables.scale(5),
-    backgroundColor: "rgba(0,0,0,0.75)",
+    backgroundColor: 'rgba(0,0,0,0.75)',
     paddingHorizontal: variables.scale(10),
     paddingVertical: variables.scale(4),
     borderRadius: variables.scale(8),
   },
   durationText: {
-    color: "white",
+    color: 'white',
     fontSize: variables.scale(18),
-    fontWeight: "700",
+    fontWeight: '700',
   },
   content: {
     flex: 1,
@@ -144,14 +129,14 @@ const styles = StyleSheet.create({
   },
   source: {
     fontSize: variables.scale(22),
-    color: "#666",
+    color: '#666',
   },
   title: {
     fontSize: variables.scale(26),
-    fontWeight: "bold",
-    color: "#333",
+    fontWeight: 'bold',
+    color: '#333',
     marginTop: variables.scale(5),
-    width: "90%",
+    width: '90%',
     lineHeight: variables.scale(40),
   },
 });

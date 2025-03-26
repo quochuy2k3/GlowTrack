@@ -1,39 +1,36 @@
-import color from "color";
-import { Dimensions, PixelRatio, Platform } from "react-native";
+// @ts-nocheck
+import color from 'color';
+import { Dimensions, PixelRatio, Platform } from 'react-native';
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get('window');
 
 export const PLATFORM = {
-  ANDROID: "android",
-  IOS: "ios",
-  MATERIAL: "material",
-  WEB: "web",
+  ANDROID: 'android',
+  IOS: 'ios',
+  MATERIAL: 'material',
+  WEB: 'web',
 };
 
 const isIphoneX =
-  Platform.OS === "ios" &&
-  !Platform.isPad &&
-  !Platform.isTVOS &&
-  (height === 812 || width === 812);
+  Platform.OS === 'ios' && !Platform.isPad && !Platform.isTVOS && (height === 812 || width === 812);
 
 const guidelineBaseWidth = 750;
 const guidelineBaseHeight = 1334;
 let ratio = width / guidelineBaseWidth;
-const scale = (size) => {
+const scale = size => {
   if (ratio == 0) {
     ratio = 0.5;
   }
   return ratio * size;
 };
 
-const verticalScale = (size) => (height / guidelineBaseHeight) * size;
-const moderateScale = (size, factor = 0.5) =>
-  size + (scale(size) - size) * factor;
+const verticalScale = size => (height / guidelineBaseHeight) * size;
+const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * factor;
 const platform = Platform.OS;
 const platformStyle = undefined;
-const fontFamily = "Mulish";
-const fontFamilySemiBold = "Mulish-SemiBold";
-const fontFamilyMedium = "Mulish-Medium";
+const fontFamily = 'Mulish';
+const fontFamilySemiBold = 'Mulish-SemiBold';
+const fontFamilyMedium = 'Mulish-Medium';
 
 const fontSize50 = scale(50); // 44px
 const fontSize48 = scale(48); // 48px
@@ -58,106 +55,104 @@ const fontSizeMediumSmall = fontSize24; // (platform === 'ios') ? 12 : 13; //24p
 const fontSizeExtraSmall = fontSize22; // (platform === 'ios') ? 10 : 12; //20px
 const fontSizeExtraExtraSmall = fontSize20; // (platform === 'ios') ? 10 : 12; //20px
 
-const ColorDanger = "#DF3651";
-const ColorWarning = "#F6BE00";
-const ColorBlue = "#007DC7";
-const ColorPurple = "#FF93B3";
-const ColorBorder = "#C8C8C8";
-const ColorTextPrimary = "#151b26";
-const ColorTextSecondary = "#6f7782";
-const ColorTextHint = "#BBBBBB";
+const ColorDanger = '#DF3651';
+const ColorWarning = '#F6BE00';
+const ColorBlue = '#007DC7';
+const ColorPurple = '#FF93B3';
+const ColorBorder = '#C8C8C8';
+const ColorTextPrimary = '#151b26';
+const ColorTextSecondary = '#6f7782';
+const ColorTextHint = '#BBBBBB';
 
-const ColorMalachite = "#24A949"; //"#15B536";
-const ColorGray11 = "#1C1C1C";
-const ColorGray52 = "#858585";
-const ColorGray92 = "#EBEBEB";
-const ColorGray77 = "#c4c4c4";
-const ColorGray73 = "#BABABA";
-const ColorGray69 = "#B0B0B0";
-const ColorGray97 = "#F7F7F7";
-const ColorGrey = "#808080";
-const ColorDustyGray = "#8B8B8B";
-const ColorWhite = "#FFFFFF";
-const ColorScorpion = "#5D5D5D";
-const ColorMercury = "#E7E7E7";
-const ColorBackgroundGray = "#F1F1F1";
-const ColorReddish = "#E24F63";
-const ColorBackgroundGray97 = "#F7F7F7";
-const ColorMandy = "#E24F63";
-const ColorMonza = "#D0011B";
-const ColorSaffron = "#F9C02F";
-const ColorS10 = "#EAECF0";
+const ColorMalachite = '#24A949'; //"#15B536";
+const ColorGray11 = '#1C1C1C';
+const ColorGray52 = '#858585';
+const ColorGray92 = '#EBEBEB';
+const ColorGray77 = '#c4c4c4';
+const ColorGray73 = '#BABABA';
+const ColorGray69 = '#B0B0B0';
+const ColorGray97 = '#F7F7F7';
+const ColorGrey = '#808080';
+const ColorDustyGray = '#8B8B8B';
+const ColorWhite = '#FFFFFF';
+const ColorScorpion = '#5D5D5D';
+const ColorMercury = '#E7E7E7';
+const ColorBackgroundGray = '#F1F1F1';
+const ColorReddish = '#E24F63';
+const ColorBackgroundGray97 = '#F7F7F7';
+const ColorMandy = '#E24F63';
+const ColorMonza = '#D0011B';
+const ColorSaffron = '#F9C02F';
+const ColorS10 = '#EAECF0';
 const listProductPadding = scale(20);
 const contentPadding = scale(30);
-const listItemProductWidth =
-  (width - 2 * contentPadding - listProductPadding) / 2;
-const listItemCategoryWidth =
-  (width - 2 * contentPadding - 2 * listProductPadding) / 3;
+const listItemProductWidth = (width - 2 * contentPadding - listProductPadding) / 2;
+const listItemCategoryWidth = (width - 2 * contentPadding - 2 * listProductPadding) / 3;
 const categoryThumbnailWidth = listItemCategoryWidth;
 const categoryThumbnailHeight = (listItemCategoryWidth * 3) / 4;
 const productThumbnailWidth = listItemProductWidth;
 const productThumbnailHeight = (productThumbnailWidth * 3) / 4;
 
 //ver 2
-const colorPrimary = "#1ECC78";
-const colorPrimaryLight = "#39FD9E";
-const colorPrimary80 = "#4BD693";
-const colorPrimary60 = "#78E0AE";
-const colorPrimary40 = "#A5EBC9";
-const colorPrimary20 = "#D2F5E4";
-const colorPrimary10 = "#E8FAF1";
-const colorPrimary05 = "#F4FDF8";
+const colorPrimary = '#1ECC78';
+const colorPrimaryLight = '#39FD9E';
+const colorPrimary80 = '#4BD693';
+const colorPrimary60 = '#78E0AE';
+const colorPrimary40 = '#A5EBC9';
+const colorPrimary20 = '#D2F5E4';
+const colorPrimary10 = '#E8FAF1';
+const colorPrimary05 = '#F4FDF8';
 
-const colorSecondary = "#303E65";
-const colorSecondaryLight = "#B3C0E0";
-const colorSecondary80 = "#596584";
-const colorSecondary60 = "#838BA3";
-const colorSecondary40 = "#ACB2C1";
-const colorSecondary20 = "#D6D8E0";
-const neutral80 = "#7A8CB4";
+const colorSecondary = '#303E65';
+const colorSecondaryLight = '#B3C0E0';
+const colorSecondary80 = '#596584';
+const colorSecondary60 = '#838BA3';
+const colorSecondary40 = '#ACB2C1';
+const colorSecondary20 = '#D6D8E0';
+const neutral80 = '#7A8CB4';
 
-const colorActive = "#1975FF";
-const colorActive80 = "#4791FF";
-const colorActive60 = "#75ACFF";
-const colorActive40 = "#A3C8FF";
-const colorActive20 = "#D1E3FF";
+const colorActive = '#1975FF';
+const colorActive80 = '#4791FF';
+const colorActive60 = '#75ACFF';
+const colorActive40 = '#A3C8FF';
+const colorActive20 = '#D1E3FF';
 
-const colorError = "#FF0E39";
-const colorError80 = "#FF3E61";
-const colorError60 = "#FF6E88";
-const colorError40 = "#FF9FB0";
-const colorError20 = "#FFCFD7";
-const colorError10 = "#FFE7EB";
-const colorError05 = "#FFF3F5";
+const colorError = '#FF0E39';
+const colorError80 = '#FF3E61';
+const colorError60 = '#FF6E88';
+const colorError40 = '#FF9FB0';
+const colorError20 = '#FFCFD7';
+const colorError10 = '#FFE7EB';
+const colorError05 = '#FFF3F5';
 
-const colorPending = "#FF7940";
-const colorPending80 = "#FF9466";
-const colorPending60 = "#FFAF8C";
-const colorPending40 = "#FFC9B3";
-const colorPending20 = "#FFE4D9";
-const colorPending10 = "#FFF2EC";
-const colorPending05 = "#FFF8F6";
+const colorPending = '#FF7940';
+const colorPending80 = '#FF9466';
+const colorPending60 = '#FFAF8C';
+const colorPending40 = '#FFC9B3';
+const colorPending20 = '#FFE4D9';
+const colorPending10 = '#FFF2EC';
+const colorPending05 = '#FFF8F6';
 
-const colorNeutral80 = "#7A8CB4";
-const colorNeutral60 = "#8793B4";
-const colorNeutral40 = "#A3B0D6";
-const colorNeutral20 = "#B3C0E0";
-const colorNeutral10 = "#DCE7F9";
-const colorNeutral04 = "#E4ECFF";
-const colorNeutral02 = "#F5F9FF";
+const colorNeutral80 = '#7A8CB4';
+const colorNeutral60 = '#8793B4';
+const colorNeutral40 = '#A3B0D6';
+const colorNeutral20 = '#B3C0E0';
+const colorNeutral10 = '#DCE7F9';
+const colorNeutral04 = '#E4ECFF';
+const colorNeutral02 = '#F5F9FF';
 
-const colorViolet100 = "#BC88FF";
-const colorViolet80 = "#CAA0FF";
-const colorViolet60 = "#D7B8FF";
+const colorViolet100 = '#BC88FF';
+const colorViolet80 = '#CAA0FF';
+const colorViolet60 = '#D7B8FF';
 
-const colorBg1 = "#FFFFFF";
-const colorBg2 = "#F3FBF9";
-const colorBg3 = "#F2F7FF";
-const colorBg4 = "#F7FBFA"; // main screen
+const colorBg1 = '#FFFFFF';
+const colorBg2 = '#F3FBF9';
+const colorBg3 = '#F2F7FF';
+const colorBg4 = '#F7FBFA'; // main screen
 
-const colorIconHeader = "#344268";
+const colorIconHeader = '#344268';
 
-const backgroundContainer = "#F3FBF9";
+const backgroundContainer = '#F3FBF9';
 
 const fs7 = 7;
 const fs8 = 8;
@@ -185,8 +180,8 @@ export default {
 
   // AndroidRipple
   androidRipple: true,
-  androidRippleColor: "rgba(256, 256, 256, 0.3)",
-  androidRippleColorDark: "rgba(0, 0, 0, 0.15)",
+  androidRippleColor: 'rgba(256, 256, 256, 0.3)',
+  androidRippleColorDark: 'rgba(0, 0, 0, 0.15)',
   buttonUppercaseAndroidText: true,
   fontFamily,
   fontFamilySemiBold,
@@ -194,7 +189,7 @@ export default {
   scale,
   verticalScale,
   // Color
-  brandWarning: "#fc782e", //'#F6A623',
+  brandWarning: '#fc782e', //'#F6A623',
   brandPrimary: colorPrimary,
   brandDanger: ColorDanger,
   ColorWarning,
@@ -233,7 +228,7 @@ export default {
   fontSize22,
   fontSize20,
   fontSize18,
-  defaultBg: "#F1F1F1",
+  defaultBg: '#F1F1F1',
   // Font
   fontSizeExtraExtraLarge,
   fontSizeExtraLarge,
@@ -246,33 +241,33 @@ export default {
   fontSizeExtraExtraSmall,
 
   // Accordion
-  headerStyle: "#edebed",
-  iconStyle: "#000",
-  contentStyle: "#f5f4f5",
-  expandedIconStyle: "#000",
+  headerStyle: '#edebed',
+  iconStyle: '#000',
+  contentStyle: '#f5f4f5',
+  expandedIconStyle: '#000',
   accordionBorderColor: ColorBorder,
 
   // ActionSheet
   elevation: 4,
-  containerTouchableBackgroundColor: "rgba(0,0,0,0.4)",
-  innerTouchableBackgroundColor: "#fff",
+  containerTouchableBackgroundColor: 'rgba(0,0,0,0.4)',
+  innerTouchableBackgroundColor: '#fff',
   listItemHeight: 50,
-  listItemBorderColor: "transparent",
+  listItemBorderColor: 'transparent',
   marginHorizontal: -15,
   marginLeft: 14,
   marginTop: 15,
   minHeight: 56,
   padding: 15,
-  touchableTextColor: "#757575",
+  touchableTextColor: '#757575',
 
   // Badge
-  badgeBg: "#ED1727",
-  badgeColor: "#fff",
+  badgeBg: '#ED1727',
+  badgeColor: '#fff',
   badgePadding: platform === PLATFORM.IOS ? 3 : 0,
 
   // Button
   buttonFontFamily: fontFamilyMedium,
-  buttonDisabledBg: "#b5b5b5",
+  buttonDisabledBg: '#b5b5b5',
   buttonPadding: 6,
   get buttonPrimaryBg() {
     return this.brandPrimary;
@@ -305,9 +300,7 @@ export default {
     return this.inverseTextColor;
   },
   get buttonTextSize() {
-    return platform === PLATFORM.IOS
-      ? this.fontSizeBase * 1.1
-      : this.fontSizeBase - 1;
+    return platform === PLATFORM.IOS ? this.fontSizeBase * 1.1 : this.fontSizeBase - 1;
   },
   get buttonTextSizeLarge() {
     return this.fontSizeBase * 1.5;
@@ -326,7 +319,7 @@ export default {
   },
 
   // Card
-  cardDefaultBg: "#fff",
+  cardDefaultBg: '#fff',
   cardBorderColor: ColorBorder,
   cardItemPadding: platform === PLATFORM.IOS ? 10 : 12,
 
@@ -338,22 +331,22 @@ export default {
   CheckboxIconSize: platform === PLATFORM.IOS ? 21 : 16,
   CheckboxIconMarginTop: platform === PLATFORM.IOS ? undefined : 1,
   CheckboxFontSize: platform === PLATFORM.IOS ? 23 / 0.9 : 17,
-  checkboxBgColor: "#039BE5",
+  checkboxBgColor: '#039BE5',
   checkboxSize: 20,
-  checkboxTickColor: "#fff",
+  checkboxTickColor: '#fff',
 
   // Color
   brandInfo: ColorMalachite,
   brandSuccess: ColorMalachite,
-  brandDark: "#000",
-  brandLight: "#f4f4f4",
+  brandDark: '#000',
+  brandLight: '#f4f4f4',
 
   // Container
-  containerBgColor: "transparent",
+  containerBgColor: 'transparent',
 
   // Date Picker
-  datePickerTextColor: "#000",
-  datePickerBg: "transparent",
+  datePickerTextColor: '#000',
+  datePickerBg: 'transparent',
 
   // FAB
   fabWidth: 56,
@@ -364,20 +357,20 @@ export default {
 
   // Footer
   footerHeight: 55,
-  footerDefaultBg: platform === PLATFORM.IOS ? "#F8F8F8" : "#3F51B5",
+  footerDefaultBg: platform === PLATFORM.IOS ? '#F8F8F8' : '#3F51B5',
   footerPaddingBottom: 0,
 
   // FooterTab
   tabBarTextColor: ColorTextPrimary,
   tabBarTextSize: platform === PLATFORM.IOS ? 14 : 11,
-  activeTab: "#fff",
+  activeTab: '#fff',
   sTabBarActiveTextColor: ColorMalachite,
   tabBarActiveTextColor: ColorMalachite,
-  tabActiveBgColor: "#fff",
+  tabActiveBgColor: '#fff',
 
   // Header
   searchBarInputHeight: platform === PLATFORM.IOS ? 30 : 50,
-  toolbarBtnTextColor: platform === PLATFORM.IOS ? "#007aff" : "#fff",
+  toolbarBtnTextColor: platform === PLATFORM.IOS ? '#007aff' : '#fff',
   get darkenHeader() {
     return color(this.tabBgColor).darken(0.03).hex();
   },
@@ -389,19 +382,19 @@ export default {
   lineHeightH3: 22,
 
   // List
-  listBg: "transparent",
+  listBg: 'transparent',
   listTextSize: fontSize30,
-  listNoteColor: "#808080",
+  listNoteColor: '#808080',
   listNoteSize: 13,
-  listItemSelected: platform === PLATFORM.IOS ? "#007aff" : "#3F51B5",
+  listItemSelected: platform === PLATFORM.IOS ? '#007aff' : '#3F51B5',
 
   // Progress Bar
-  defaultProgressColor: "#E4202D",
-  inverseProgressColor: "#1A191B",
+  defaultProgressColor: '#E4202D',
+  inverseProgressColor: '#1A191B',
 
   // Radio Button
   radioBtnSize: platform === PLATFORM.IOS ? 25 : 23,
-  radioSelectedColorAndroid: "#3F51B5",
+  radioSelectedColorAndroid: '#3F51B5',
   radioBtnLineHeight: platform === PLATFORM.IOS ? 29 : 24,
   get radioColor() {
     return this.brandPrimary;
@@ -411,19 +404,19 @@ export default {
   segmentBackgroundColor: ColorWhite,
   segmentActiveBackgroundColor: ColorMalachite,
   segmentTextColor: ColorMalachite,
-  segmentActiveTextColor: "#fff",
+  segmentActiveTextColor: '#fff',
   segmentBorderColor: ColorMalachite,
-  segmentBorderColorMain: "#3F51B5",
+  segmentBorderColorMain: '#3F51B5',
 
   // Spinner
-  defaultSpinnerColor: "#45D56E",
-  inverseSpinnerColor: "#1A191B",
+  defaultSpinnerColor: '#45D56E',
+  inverseSpinnerColor: '#1A191B',
 
   // Tab
-  tabDefaultBg: "#fff",
+  tabDefaultBg: '#fff',
   topTabBarTextColor: ColorTextPrimary,
   topTabBarActiveTextColor: ColorMalachite,
-  topTabBarBorderColor: "#fff",
+  topTabBarBorderColor: '#fff',
   topTabBarActiveBorderColor: ColorMalachite,
 
   // Text
@@ -433,7 +426,7 @@ export default {
   },
 
   // Other
-  dropdownLinkColor: "#414142",
+  dropdownLinkColor: '#414142',
   inputLineHeight: 24,
   inputGroupRoundedBorderRadius: 30,
 
@@ -451,8 +444,8 @@ export default {
   textColor: ColorTextPrimary,
   textColorSecondary: ColorTextSecondary,
   textColorHint: ColorTextHint,
-  inverseTextColor: "#fff",
-  lineHeight: platform === "ios" ? 20 : 24,
+  inverseTextColor: '#fff',
+  lineHeight: platform === 'ios' ? 20 : 24,
 
   // Title
   titleFontfamily: fontFamily,
@@ -465,24 +458,24 @@ export default {
   toolbarBackBtnColor: colorSecondaryLight,
   toolbarBtnColor: colorIconHeader,
   toolbarDefaultBg: ColorWhite,
-  toolbarHeight: platform === "ios" ? scale(140) : scale(100),
-  toolbarIconSize: platform === "ios" ? 20 : 22,
+  toolbarHeight: platform === 'ios' ? scale(140) : scale(100),
+  toolbarIconSize: platform === 'ios' ? 20 : 22,
   toolbarIconColor: ColorWhite,
-  toolbarSearchIconSize: platform === "ios" ? 20 : 23,
-  toolbarInputColor: platform === "ios" ? "#CECDD2" : "#fff",
-  searchBarHeight: platform === "ios" ? 30 : 40,
-  toolbarInverseBg: "#222",
+  toolbarSearchIconSize: platform === 'ios' ? 20 : 23,
+  toolbarInputColor: platform === 'ios' ? '#CECDD2' : '#fff',
+  searchBarHeight: platform === 'ios' ? 30 : 40,
+  toolbarInverseBg: '#222',
   toolbarTextColor: colorSecondary,
-  iosStatusbar: "dark-content",
-  toolbarDefaultBorder: "#c9c9c9",
-  toolbarPaddingTop: platform === "ios" ? scale(40) : 0,
+  iosStatusbar: 'dark-content',
+  toolbarDefaultBorder: '#c9c9c9',
+  toolbarPaddingTop: platform === 'ios' ? scale(40) : 0,
 
   get statusBarColor() {
     return this.toolbarDefaultBg;
   },
 
   //bottom tab
-  bottomTabIconColor: "#3F3F3F",
+  bottomTabIconColor: '#3F3F3F',
   bottomTabSelectedIconColor: ColorMalachite,
 
   borderColor: ColorBorder,
@@ -490,7 +483,7 @@ export default {
   listBorderColor: ColorBorder,
   listDividerBg: ColorBackgroundGray,
   listItemHeight: scale(100),
-  listBtnUnderlayColor: "#DDD",
+  listBtnUnderlayColor: '#DDD',
   listItemPadding: contentPadding,
   listItemHPadding: contentPadding,
   listProductPadding: listProductPadding,
@@ -506,10 +499,10 @@ export default {
   cardBorderRadius: scale(10),
 
   // Icon
-  iconFamily: "Ionicons",
-  iconFontSize: platform === "ios" ? 30 : 28,
+  iconFamily: 'Ionicons',
+  iconFontSize: platform === 'ios' ? 30 : 28,
   iconMargin: 7,
-  iconHeaderSize: platform === "ios" ? 34 : 24,
+  iconHeaderSize: platform === 'ios' ? 34 : 24,
 
   iconBackSize: 17,
 
@@ -519,7 +512,7 @@ export default {
   tabTextColor: ColorTextPrimary,
 
   // Other
-  borderRadiusBase: platform === "ios" ? 5 : 2,
+  borderRadiusBase: platform === 'ios' ? 5 : 2,
   borderWidth: 1 / PixelRatio.getPixelSizeForLayoutSize(1),
   contentPadding: contentPadding,
 
@@ -530,8 +523,8 @@ export default {
     borderRadius: scale(25),
     width: scale(70),
     height: scale(70),
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   thumbnalEmptySize: 300,
@@ -540,18 +533,18 @@ export default {
   // // InputGroup
   inputFontSize: fontSizeBase,
   inputBorderColor: ColorBorder,
-  inputSuccessBorderColor: "#2b8339",
-  inputErrorBorderColor: "#ed2f2f",
+  inputSuccessBorderColor: '#2b8339',
+  inputErrorBorderColor: '#ed2f2f',
   inputRounderRadius: scale(10),
   //button
-  btnDisabledBg: "#b5b5b5",
+  btnDisabledBg: '#b5b5b5',
   buttonPadding: 0,
 
   get inputColor() {
     return this.textColor;
   },
   get inputColorPlaceholder() {
-    return "#575757";
+    return '#575757';
   },
 
   inputGroupMarginBottom: 10,

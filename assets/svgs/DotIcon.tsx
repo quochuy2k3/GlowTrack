@@ -1,5 +1,5 @@
-import * as React from "react";
-import { SvgXml } from "react-native-svg";
+import * as React from 'react';
+import { SvgXml } from 'react-native-svg';
 
 interface IconProps {
   width?: number;
@@ -11,7 +11,7 @@ const xml = (props: IconProps): string => {
   const { width, height, color } = props;
   const Width = width || 25;
   const Height = height || 25;
-  const Color = color || "#1975FF";
+  const Color = color || '#1975FF';
 
   return `
 <svg width="${Width}" height="${Height}"  viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -23,6 +23,6 @@ const xml = (props: IconProps): string => {
     `;
 };
 
-const Icon: React.FC<IconProps> = (props) => <SvgXml xml={xml(props)} />;
+const Icon: React.FC<IconProps> = props => <SvgXml xml={xml(props)} />;
 
 export default Icon;

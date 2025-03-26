@@ -11,10 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": [
-          "audio",
-          "picture-in-picture"
-        ],
+        "UIBackgroundModes": ["audio", "picture-in-picture"],
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
         }

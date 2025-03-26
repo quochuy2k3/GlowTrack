@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SvgXml } from 'react-native-svg';
 
-const xml = (props) => {
+const xml = props => {
   const { width = 18, height = 16, color = 'FF3E61' } = props;
   return `
 <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -12,6 +12,6 @@ const xml = (props) => {
     `;
 };
 
-const Icon = (props) => <SvgXml xml={xml(props)} />;
+const Icon = props => <SvgXml xml={xml(props)} />;
 
 export default Icon;

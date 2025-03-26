@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { useService } from "@/services";
+import { useState, useEffect } from 'react';
+import { useServices } from '@/services';
 const useFetchCareerGoal = () => {
-  const service = useService();
+  const service = useServices();
   const [isLoading, setIsLoading] = useState(true);
   const [userSettingsCareerGoal, setUserSettingsCareerGoal] = useState({});
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -19,7 +19,7 @@ const useFetchCareerGoal = () => {
         const resSuggestedSkills = await service.talentManagement.listSkills(
           userSettingsCareerGoal.metaSkills.current_page + 1
         );
-        setUserSettingsCareerGoal((prev) => {
+        setUserSettingsCareerGoal(prev => {
           return {
             ...prev,
             skillsSuggest: [...prev.skillsSuggest, ...resSuggestedSkills.items],
@@ -27,7 +27,7 @@ const useFetchCareerGoal = () => {
           };
         });
       } catch (error) {
-        console.error("Error loading more items:", error);
+        console.error('Error loading more items:', error);
       } finally {
         setIsLoadingMore(false);
       }
@@ -43,7 +43,7 @@ const useFetchCareerGoal = () => {
         const resJobInterests = await service.shop.listPositions(
           userSettingsCareerGoal.metaJobInterests.current_page + 1
         );
-        setUserSettingsCareerGoal((prev) => {
+        setUserSettingsCareerGoal(prev => {
           return {
             ...prev,
             jobInterests: [...prev.jobInterests, ...resJobInterests.items],
@@ -51,37 +51,37 @@ const useFetchCareerGoal = () => {
           };
         });
       } catch (error) {
-        console.error("Error loading more items:", error);
+        console.error('Error loading more items:', error);
       } finally {
         setIsLoadingMore(false);
       }
     }
   };
 
-  const addSkill = (skill) => {
+  const addSkill = skill => {
     if (phase === 1) {
-      setUserSettingsCareerGoal((prev) => {
+      setUserSettingsCareerGoal(prev => {
         return {
           ...prev,
           skills: [skill.id, ...prev.skills],
           skillsObj: [skill, ...prev.skillsObj],
-          skillsSuggest: prev.skillsSuggest.filter((s) => s.id !== skill.id),
+          skillsSuggest: prev.skillsSuggest.filter(s => s.id !== skill.id),
         };
       });
     }
     if (phase === 3) {
-      setUserSettingsCareerGoal((prev) => {
+      setUserSettingsCareerGoal(prev => {
         return {
           ...prev,
           rolesInterested: [skill.id, ...prev.rolesInterested],
           rolesInterestedObj: [skill, ...prev.rolesInterestedObj],
-          jobInterests: prev.jobInterests.filter((s) => s.id !== skill.id),
+          jobInterests: prev.jobInterests.filter(s => s.id !== skill.id),
         };
       });
     }
   };
-  const setCareerFocus = (careerFocus) => {
-    setUserSettingsCareerGoal((prev) => {
+  const setCareerFocus = careerFocus => {
+    setUserSettingsCareerGoal(prev => {
       return {
         ...prev,
         careerFocus: careerFocus,
@@ -89,13 +89,11 @@ const useFetchCareerGoal = () => {
     });
   };
 
-  const removeSkill = (skill) => {
+  const removeSkill = skill => {
     if (phase === 1) {
-      setUserSettingsCareerGoal((prev) => {
-        const updatedSkills = prev.skills.filter((s) => s !== skill.id);
-        const updatedSkillsObj = prev.skillsObj.filter(
-          (sObj) => sObj.id !== skill.id
-        );
+      setUserSettingsCareerGoal(prev => {
+        const updatedSkills = prev.skills.filter(s => s !== skill.id);
+        const updatedSkillsObj = prev.skillsObj.filter(sObj => sObj.id !== skill.id);
         return {
           ...prev,
           skills: updatedSkills,
@@ -105,12 +103,10 @@ const useFetchCareerGoal = () => {
       });
     }
     if (phase === 3) {
-      setUserSettingsCareerGoal((prev) => {
-        const updatedRolesInterested = prev.rolesInterested.filter(
-          (s) => s !== skill.id
-        );
+      setUserSettingsCareerGoal(prev => {
+        const updatedRolesInterested = prev.rolesInterested.filter(s => s !== skill.id);
         const updatedRolesInterestedObj = prev.rolesInterestedObj.filter(
-          (sObj) => sObj.id !== skill.id
+          sObj => sObj.id !== skill.id
         );
         return {
           ...prev,
@@ -127,8 +123,7 @@ const useFetchCareerGoal = () => {
 
   const fetchCareerGoal = async () => {
     setIsLoading(true);
-    const resUserSettingsCareerGoal =
-      await service.userSettings.listUserSetting();
+    const resUserSettingsCareerGoal = await service.userSettings.listUserSetting();
     const resSuggestedSkills = await service.talentManagement.listSkills(1);
     const resJobInterests = await service.shop.listPositions(1);
     if (resUserSettingsCareerGoal) {
@@ -155,7 +150,7 @@ const useFetchCareerGoal = () => {
         setUserSettingsCareerGoal(resData);
       }
     } catch (error) {
-      console.error("Error submitting career goal:", error);
+      console.error('Error submitting career goal:', error);
     }
   };
 

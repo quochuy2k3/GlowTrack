@@ -1,5 +1,5 @@
 export type RootStackParamList = {
-  "courses/detail/[id]": {
+  'courses/detail/[id]': {
     id: string;
     title: string;
   };
