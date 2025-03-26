@@ -24,6 +24,7 @@ export default function Layout() {
       <Tabs
         screenOptions={{
           tabBarStyle: {
+            position: 'absolute',
             zIndex: 10,
             paddingTop: Platform.OS === 'android' ? 4 : 0,
             height: Platform.OS === 'android' ? 67 : 80,
@@ -34,7 +35,6 @@ export default function Layout() {
           },
         }}
       >
-        {' '}
         <Tabs.Screen
           name="index"
           options={{
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: 'rgba(163, 159, 159, 1)',
+    backgroundColor: 'rgb(198, 195, 195)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
