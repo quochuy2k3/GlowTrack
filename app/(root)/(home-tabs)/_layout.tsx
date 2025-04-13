@@ -4,11 +4,19 @@ import { BookMarked, House, List, Map, User } from '@tamagui/lucide-icons';
 import { useAuth } from '@/contexts/auth';
 import TabBottom from '@/assets/svgs/tabBottom';
 import { View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import commonColor from '@/theme/commonColor';
 // SVG background for the tab bar
 const TabBarBackground = () => {
   return (
     <View style={styles.svgBackgroundContainer}>
-      <TabBottom style={styles.svgBackgroundContainer} width="100%" height="100" color="#fff" />
+      <TabBottom
+        style={styles.svgBackgroundContainer}
+        borderColor={commonColor.ColorGray69}
+        borderWidth={0.5}
+        width="100%"
+        height="100"
+        color="#fff"
+      />
     </View>
   );
 };
@@ -18,7 +26,6 @@ export default function Layout() {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* SVG background for the tab bar */}
       <TabBarBackground />
 
       <Tabs
@@ -40,13 +47,13 @@ export default function Layout() {
           options={{
             title: t('home.title'),
             tabBarIcon: ({ color }) => <House color={color as any} />,
+            headerShown: false,
           }}
         />
         <Tabs.Screen
           name="my-learning"
           options={{
-            href: auth.isAuthenticated ? undefined : null,
-            title: t('myLearning.title'),
+            title: 'Hành Trình',
             tabBarIcon: ({ color }) => <Map color={color as any} />,
             headerShown: false,
           }}
@@ -71,8 +78,7 @@ export default function Layout() {
         <Tabs.Screen
           name="category"
           options={{
-            href: auth.isAuthenticated ? undefined : null,
-            title: t('category.title'),
+            title: 'BXH',
             tabBarIcon: ({ color }) => <List color={color as any} />,
           }}
         />

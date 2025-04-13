@@ -155,7 +155,6 @@ const styles = StyleSheet.create({
   wrapAboutThePlan: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: variables.scale(20),
     flexWrap: 'wrap',
   },
   skillItem: {

@@ -16,7 +16,6 @@ import {
 } from 'react-native';
 import { Image, Spinner } from 'tamagui';
 import Content from './components/Content';
-import ChapterQuiz from './components/chapterQuiz';
 import { useNavigation } from '@react-navigation/native';
 const { width, height } = Dimensions.get('window');
 
@@ -178,19 +177,7 @@ export default function LearnCourseScreen({ id }: LearnCourseScreenProps) {
               ? styles.learningContainerMiniDock
               : styles.learningContainerFullScreen
           }
-        >
-          <ChapterQuiz
-            isLastItem={isLastItem}
-            content={content}
-            onLoadData={onLoadData}
-            setIsLearning={setIsLearning}
-            getNextContent={getNextContent}
-            mode={mode}
-            setMode={setMode}
-            courseId={id}
-            setContentId={setContentId}
-          />
-        </View>
+        ></View>
       )}
     </SafeAreaView>
   );

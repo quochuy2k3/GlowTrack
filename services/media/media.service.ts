@@ -1,10 +1,11 @@
 import type { PaginatedListResponse } from '@/models/base';
-import lmsAPI from '../config/axios';
+import lmsAPI, { mediaAPI } from '../config/axios';
 import {
   type Media,
   type UploadVideoRequest,
   type UploadVideo,
   type MediaNode,
+  UploadAvatar,
 } from '@/models/media';
 
 /**
@@ -54,5 +55,21 @@ export const MediaService = {
   uploadVideo: async (data: UploadVideoRequest) => {
     const response = await lmsAPI.post<UploadVideo>('/media/upload/video', data);
     return response.data;
+  },
+
+  uploadAvatar: async (data: FormData) => {
+    try {
+      const response = await mediaAPI.post<UploadAvatar>('/upload-image', data);
+
+      if (response && response.url) {
+        return response.url;
+      } else {
+        console.error('Error: URL not found in response');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error uploading image', error);
+      return null;
+    }
   },
 };

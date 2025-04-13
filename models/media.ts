@@ -31,3 +31,7 @@ export interface UploadVideo {
   uploadLink: string;
   fileSize: number;
 }
+
+export interface UploadAvatar {
+  url: string;
+}

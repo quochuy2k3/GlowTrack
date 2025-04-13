@@ -6,7 +6,7 @@ import * as CourseServices from './courses';
 import * as MediaServices from './media';
 import * as TalentSkillsServices from './talent-skills';
 import * as AuthServices from './auth';
-
+import * as RoutineServices from './routine';
 const services = {
   ...WidgetServices,
   ...NotificationServices,
@@ -16,6 +16,7 @@ const services = {
   ...MediaServices,
   ...TalentSkillsServices,
   ...AuthServices,
+  ...RoutineServices,
 };
 
 export default services;

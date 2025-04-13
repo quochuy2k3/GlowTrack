@@ -7,25 +7,50 @@ const defaultHeaders = {
   LANG: 'vi',
   Timezone: 'Asia/Saigon',
 } as const;
+const mediaHeaders = {
+  'Content-Type': 'multipart/form-data',
+  LANG: 'vi',
+  Timezone: 'Asia/Saigon',
+} as const;
+
+const mediaAPI: AxiosInstance = axios.create({
+  baseURL: `${API_URL}/media`,
+  headers: mediaHeaders,
+});
 
 const lmsAPI: AxiosInstance = axios.create({
   baseURL: `${API_URL}/lms`,
   headers: defaultHeaders,
 });
 
-lmsAPI.interceptors.request.use(requestInterceptor);
-lmsAPI.interceptors.response.use(responseInterceptor);
+const userAPI: AxiosInstance = axios.create({
+  baseURL: `${API_URL}/user`,
+  headers: defaultHeaders,
+});
+
+const routineAPI: AxiosInstance = axios.create({
+  baseURL: `${API_URL}/routine`,
+  headers: defaultHeaders,
+});
+
+routineAPI.interceptors.request.use(requestInterceptor);
+routineAPI.interceptors.response.use(responseInterceptor);
+
+userAPI.interceptors.request.use(requestInterceptor);
+userAPI.interceptors.response.use(responseInterceptor);
 
 const talentManagementAPI: AxiosInstance = axios.create({
   baseURL: `${API_URL}/talent-management`,
   headers: defaultHeaders,
 });
+mediaAPI.interceptors.request.use(requestInterceptor);
+mediaAPI.interceptors.response.use(responseInterceptor);
 
 talentManagementAPI.interceptors.request.use(requestInterceptor);
 talentManagementAPI.interceptors.response.use(responseInterceptor);
 
 const authAPI: AxiosInstance = axios.create({
-  baseURL: `${API_URL}/api/v4/auth`,
+  baseURL: `${API_URL}/auth`,
   headers: defaultHeaders,
 });
 
@@ -36,8 +61,18 @@ function setupBearerAuthorization(token: string) {
   lmsAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
   talentManagementAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
   authAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
+  routineAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
+  userAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
 }
 
-export { lmsAPI, talentManagementAPI, authAPI, setupBearerAuthorization };
+export {
+  lmsAPI,
+  talentManagementAPI,
+  authAPI,
+  setupBearerAuthorization,
+  routineAPI,
+  userAPI,
+  mediaAPI,
+};
 
 export default lmsAPI;

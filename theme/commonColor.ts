@@ -28,10 +28,18 @@ const verticalScale = size => (height / guidelineBaseHeight) * size;
 const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * factor;
 const platform = Platform.OS;
 const platformStyle = undefined;
-const fontFamily = 'Mulish';
-const fontFamilySemiBold = 'Mulish-SemiBold';
-const fontFamilyMedium = 'Mulish-Medium';
-
+const fontFamily = 'MulishMedium';
+const fontFamilySemiBold = 'MulishSemiBold';
+const fontFamilyMedium = 'MulishMedium';
+const fontFamilyLight = 'MulishLight';
+const fontFamilyBold = 'MulishBold';
+const fontFamilyItalic = 'MulishItalic';
+const fontFamilyRobotoMedium = 'RobotoMedium';
+const fontFamilyRobotoRegular = 'RobotoRegular';
+const fontFamilyIcielPantonBold = 'iCielPantonBold';
+const fontFamilyIcielPantonSemiBold = 'iCielPantonSemiBold';
+const fontFamilyAgrifont = 'agrifont';
+const fontFamilyWinkySans = 'WinkySans';
 const fontSize50 = scale(50); // 44px
 const fontSize48 = scale(48); // 48px
 const fontSize44 = scale(44); // 44px
@@ -186,6 +194,16 @@ export default {
   fontFamily,
   fontFamilySemiBold,
   fontFamilyMedium,
+  fontFamilyLight,
+  fontFamilyBold,
+  fontFamilyItalic,
+  fontFamilyRobotoMedium,
+  fontFamilyRobotoRegular,
+  fontFamilyIcielPantonBold,
+  fontFamilyIcielPantonSemiBold,
+  fontFamilyAgrifont,
+  fontFamilyWinkySans,
+
   scale,
   verticalScale,
   // Color
@@ -538,6 +556,7 @@ export default {
   inputRounderRadius: scale(10),
   //button
   btnDisabledBg: '#b5b5b5',
+  // eslint-disable-next-line no-dupe-keys
   buttonPadding: 0,
 
   get inputColor() {

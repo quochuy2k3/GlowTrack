@@ -1,27 +1,35 @@
 {
   "expo": {
-    "name": "skillfy-lms-app",
-    "slug": "skillfy-lms-app",
+    "name": "glow-track-app",
+    "slug": "glow-track-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
+    "projectId": "bc3fdc48-68ad-42b3-966c-84c15b07d9dc",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": ["audio", "picture-in-picture"],
+        "NSLocationWhenInUseUsageDescription": "We need your location to show nearby places",
+        "NSLocationAlwaysUsageDescription": "We need your location even in background.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "We need your location even in background for accurate tracking.",
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
-        }
-      }
+        },
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "com.anonymous.glowtrack"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
+      "package": "com.anonymous.glowtrack",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -30,6 +38,14 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow GlowTrack to access your camera",
+          "microphonePermission": "Allow GlowTrack to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -40,10 +56,44 @@
         }
       ],
       "expo-secure-store",
-      "expo-localization"
+      "expo-localization",
+      [
+        "onesignal-expo-plugin",
+        {
+          "mode": "development"
+        }
+      ],
+      "expo-build-properties"
     ],
+    "extra": {
+      "oneSignalAppId": "d99b7d24-953b-4b01-897b-24d00b64ec77",
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "OneSignalNotificationServiceExtension",
+                  "bundleIdentifier": "com.anonymous.glowtrack.OneSignalNotificationServiceExtension",
+                  "entitlements": {
+                    "com.apple.security.application-groups": [
+                      "group.com.anonymous.glowtrack.onesignal"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "projectId": "bc3fdc48-68ad-42b3-966c-84c15b07d9dc"
+      }
+    },
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "owner": "baoempro2003"
   }
 }

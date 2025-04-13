@@ -3,6 +3,9 @@ import { useContext, createContext, type PropsWithChildren, useEffect, useReduce
 import { randomUUID } from 'expo-crypto';
 import * as Application from 'expo-application';
 import { appReducer, AppAction, AppState, initialState } from './reducer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
 
 const AppStateContext = createContext<{
   state: AppState;

@@ -1,4 +1,4 @@
-import lmsAPI from '../config/axios';
+import { userAPI } from '../config/axios';
 import type { UpdateAvatarRequest, UpdateProfileRequest, UserProfile } from '@/models/user-profile';
 
 /**
@@ -9,8 +9,8 @@ export const UserProfileService = {
    * Get current user profile
    */
   getProfile: async (): Promise<UserProfile> => {
-    const response = await lmsAPI.get('/users/profile');
-    return response.data;
+    const response = await userAPI.get<UserProfile>('');
+    return response;
   },
 
   /**
@@ -18,7 +18,7 @@ export const UserProfileService = {
    * @param data Profile data to update
    */
   updateProfile: async (data: UpdateProfileRequest): Promise<UserProfile> => {
-    const response = await lmsAPI.put('/users/profile', data);
+    const response = await userAPI.put('/me', data);
     return response.data;
   },
 
@@ -31,7 +31,7 @@ export const UserProfileService = {
     const formData = new FormData();
     formData.append('file', data.file);
 
-    const response = await lmsAPI.put('/users/avatar', formData, {
+    const response = await userAPI.put('/me/avatar', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -43,7 +43,7 @@ export const UserProfileService = {
    * Delete user avatar
    */
   deleteAvatar: async (): Promise<UserProfile> => {
-    const response = await lmsAPI.delete('/users/avatar');
+    const response = await userAPI.delete('/me/avatar');
     return response.data;
   },
 
@@ -56,7 +56,7 @@ export const UserProfileService = {
     newPassword: string;
     confirmPassword: string;
   }): Promise<{ message: string }> => {
-    const response = await lmsAPI.post('/users/change-password', data);
+    const response = await userAPI.post('/me/change-password', data);
     return response.data;
   },
 };

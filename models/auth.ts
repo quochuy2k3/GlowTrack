@@ -32,11 +32,6 @@ export type VerificationStage = 'validate' | 'resend-otp';
 export type VerificationType = 'login';
 
 export interface VerificationRequest {
-  type: VerificationType;
-  stage: VerificationStage;
-  shop_id: string;
-  user_id: string;
-  device_id: string;
   otp?: string;
 }
 
@@ -54,7 +49,8 @@ export interface VerificationInput {
 
 export type StartVerificationInput = VerificationInput;
 
-export interface VerifyOTPInput extends VerificationInput {
+export interface VerifyOTPInput {
+  email: string;
   otp: string;
 }
 
@@ -68,10 +64,18 @@ export interface ValidateEmailInput {
 
 export interface SigninInput {
   email: string;
-  deviceId: string;
-  uuid: string;
-  otp: string;
-  shop_username: string;
-  shop_id: string;
-  user_id: string;
+  password: string;
+}
+
+export interface SendOTPInput {
+  email: string;
+}
+
+export interface SignUpInput {
+  email: string;
+  password: string;
+  fullname: string;
+  phone: string;
+  avatar: string;
+  gender: string;
 }

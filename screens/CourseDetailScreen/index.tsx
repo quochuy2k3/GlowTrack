@@ -34,15 +34,6 @@ export default function CourseDetailScreen({ id }: CourseDetailScreenProps) {
     queryFn: () => services.WidgetService.getRelatedCourse(id),
   });
 
-  const _onShowAllRelatedCourses = () => {
-    router.push({
-      pathname: '/(root)/(modals)/courses/related/[courseId]',
-      params: {
-        courseId: id,
-      },
-    });
-  };
-
   const _onStartLearning = () => {
     router.push({
       pathname: '/courses/learn/[id]',
@@ -119,7 +110,7 @@ export default function CourseDetailScreen({ id }: CourseDetailScreenProps) {
               <>
                 <XStack justify="space-between" items="center">
                   <Text fontWeight="bold">{t('related_courses')}</Text>
-                  <TouchableOpacity onPress={_onShowAllRelatedCourses}>
+                  <TouchableOpacity>
                     <Text color="$accent1">{t('showAll')}</Text>
                   </TouchableOpacity>
                 </XStack>

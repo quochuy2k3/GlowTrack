@@ -8,16 +8,6 @@ export default function AccountScreen() {
   const router = useRouter();
   const { t } = useTranslation();
 
-  if (!auth.isAuthenticated) {
-    return (
-      <View flex={1} justify="center" items="center">
-        <Button onPress={() => router.push('/(root)/(modals)/sign-in')} theme="accent">
-          <Text>{t('SignIn')}</Text>
-        </Button>
-      </View>
-    );
-  }
-
   return (
     <View flex={1} justify="center" items="center">
       <Button onPress={() => auth.signOut()} theme="accent" variant="outlined">
