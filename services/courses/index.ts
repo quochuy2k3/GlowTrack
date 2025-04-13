@@ -1,14 +1,9 @@
-import getDetail from "./getDetail";
-import list from "./list";
-import getCourseSection from "./getCourseSection";
-import getContentCourse from "./getContentCourse";
-import listLmsCourses from "./listLmsCourses";
-const coursesService = {
-  list,
-  getDetail,
-  getCourseSection,
-  getContentCourse,
-  listLmsCourses,
-};
-
-export default coursesService;
+export * from './course.service';
+export * from './course-category.service';
+export * from './course-content.service';
+export * from './course-rating.service';
+export * from './course-section.service';
+export * from './instructor.service';
+export * from './learning-objective.service';
+export * from './program-source.service';
+export * from './training-program.service';

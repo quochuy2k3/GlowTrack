@@ -1,10 +1,10 @@
-import { t } from "i18next";
-import { Alert } from "react-native";
+import { t } from 'i18next';
+import { Alert } from 'react-native';
 
 type AlertButtonConfig = {
   text: string;
   onPress?: () => void;
-  style?: "cancel" | "destructive" | "default";
+  style?: 'cancel' | 'destructive' | 'default';
 };
 
 const showConfirmDelete = (
@@ -12,8 +12,8 @@ const showConfirmDelete = (
   message: string,
   confirmButton: AlertButtonConfig,
   cancelButton: AlertButtonConfig = {
-    text: t("cancel").toUpperCase(),
-    style: "cancel",
+    text: t('cancel').toUpperCase(),
+    style: 'cancel',
   }
 ) => {
   Alert.alert(
@@ -23,12 +23,12 @@ const showConfirmDelete = (
       {
         text: confirmButton.text,
         onPress: confirmButton.onPress,
-        style: confirmButton.style || "default",
+        style: confirmButton.style || 'default',
       },
       {
         text: cancelButton.text,
         onPress: cancelButton.onPress,
-        style: cancelButton.style || "cancel",
+        style: cancelButton.style || 'cancel',
       },
     ],
     { cancelable: false }

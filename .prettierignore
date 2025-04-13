@@ -1,0 +1,9 @@
+node_modules
+.expo
+.expo-shared
+build
+dist
+coverage
+*.log
+yarn.lock
+.yarn 

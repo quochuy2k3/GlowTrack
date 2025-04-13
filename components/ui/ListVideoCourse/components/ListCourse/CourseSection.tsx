@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,14 +7,14 @@ import {
   Image,
   Platform,
   ActionSheetIOS,
-} from "react-native";
-import { t } from "i18next";
-import { useRouter } from "expo-router";
-import CardRequireLearning from "./CardRequireLearning";
-import DotIcon from "@/assets/svgs/DotIcon";
-import variables from "@/theme/commonColor";
-import { Spinner } from "tamagui";
-import { UserPlan } from "@/services/mylearning/models";
+} from 'react-native';
+import { t } from 'i18next';
+import { useRouter } from 'expo-router';
+import CardRequireLearning from './CardRequireLearning';
+import DotIcon from '@/assets/svgs/DotIcon';
+import variables from '@/theme/commonColor';
+import { Spinner } from 'tamagui';
+import { UserPlan } from '@/services/mylearning/models';
 interface CourseSectionProps {
   widget: UserPlan;
   isLoading: boolean;
@@ -28,7 +28,7 @@ const CourseSection = ({ widget, isLoading, codeName }: CourseSectionProps) => {
 
   // handle
   const adjustModule = (moduleId: string) => {
-    const options = [t("addCourse"), t("editCourse"), t("cancel")];
+    const options = [t('addCourse'), t('editCourse'), t('cancel')];
     const cancelButtonIndex = options.length - 1;
 
     ActionSheetIOS.showActionSheetWithOptions(
@@ -37,11 +37,11 @@ const CourseSection = ({ widget, isLoading, codeName }: CourseSectionProps) => {
         cancelButtonIndex,
         destructiveButtonIndex: 1,
       },
-      (buttonIndex) => {
+      buttonIndex => {
         switch (buttonIndex) {
           case 0:
             router.push({
-              pathname: "/courses/addCourses",
+              pathname: '/courses/addCourses',
               params: {
                 moduleId: moduleId,
                 dataObj: JSON.stringify(widget?.dataObj),
@@ -50,7 +50,7 @@ const CourseSection = ({ widget, isLoading, codeName }: CourseSectionProps) => {
             break;
           case 1:
             router.push({
-              pathname: "/courses/deleteCourses",
+              pathname: '/courses/deleteCourses',
               params: {
                 moduleId: moduleId,
                 dataObj: JSON.stringify(widget?.dataObj),
@@ -84,30 +84,27 @@ const CourseSection = ({ widget, isLoading, codeName }: CourseSectionProps) => {
         <View
           style={{
             flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
+            justifyContent: 'center',
+            alignItems: 'center',
             paddingVertical: variables.scale(20),
           }}
         >
-          <Image
-            source={require("../../../../../assets/images/Empty.png")}
-            resizeMode="cover"
-          />
-          <Text style={styles.text}>{t("drum")}</Text>
+          <Image source={require('../../../../../assets/images/Empty.png')} resizeMode="cover" />
+          <Text style={styles.text}>{t('drum')}</Text>
         </View>
       )}
       {widget.dataObj.length > 3 && (
         <TouchableOpacity
           onPress={() => {
             router.push({
-              pathname: "/list-courses",
-              params: { codeName: codeName, isHome: "false" },
+              pathname: '/courses',
+              params: { codeName: codeName, isHome: 'false' },
             });
           }}
           style={styles.showAllButton}
         >
           <Text style={styles.showAllText}>
-            {t("myLearning.showDetails")} ({widget.dataObj.length})
+            {t('myLearning.showDetails')} ({widget.dataObj.length})
           </Text>
         </TouchableOpacity>
       )}
@@ -125,23 +122,23 @@ const styles = StyleSheet.create({
   },
   widgetSection: {
     marginBottom: variables.scale(40),
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     padding: variables.scale(40),
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: variables.scale(20),
   },
   sectionTitle: {
     fontSize: variables.scale(36),
-    fontWeight: Platform.OS === "ios" ? "600" : "bold",
-    color: "#000000",
+    fontWeight: Platform.OS === 'ios' ? '600' : 'bold',
+    color: '#000000',
   },
   courseCard: {
-    flexDirection: "row",
-    overflow: "hidden",
+    flexDirection: 'row',
+    overflow: 'hidden',
   },
   courseImage: {
     width: variables.scale(240),
@@ -154,31 +151,31 @@ const styles = StyleSheet.create({
   },
   courseTitle: {
     fontSize: variables.scale(32),
-    fontWeight: "500",
+    fontWeight: '500',
     marginBottom: variables.scale(8),
   },
   courseProgress: {
     fontSize: variables.scale(28),
-    color: "#666",
+    color: '#666',
   },
   showAllButton: {
-    alignItems: "flex-start",
+    alignItems: 'flex-start',
     paddingVertical: variables.scale(16),
   },
   showAllText: {
     fontSize: variables.scale(28),
     color: variables.colorPrimary,
-    textDecorationLine: "underline",
+    textDecorationLine: 'underline',
   },
   loading: {
     padding: variables.scale(40),
-    alignItems: "center",
+    alignItems: 'center',
   },
   text: {
     fontSize: variables.scale(24),
-    color: "#BFBFBF",
+    color: '#BFBFBF',
     marginTop: variables.scale(14),
-    fontWeight: "300",
+    fontWeight: '300',
   },
 });
 
