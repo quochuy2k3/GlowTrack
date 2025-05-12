@@ -63,12 +63,12 @@ export default function RootLayout() {
         <QueryClientProvider client={queryClient}>
           <AppStateProvider>
             <AuthProvider>
-              <NotificationProvider>
-                <ServicesProvider>
+              <ServicesProvider>
+                <NotificationProvider>
                   <Slot />
                   <StatusBar style="auto" />
-                </ServicesProvider>
-              </NotificationProvider>
+                </NotificationProvider>
+              </ServicesProvider>
             </AuthProvider>
           </AppStateProvider>
         </QueryClientProvider>

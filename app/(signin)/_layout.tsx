@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/auth';
 
 export default function Layout() {
-  const { t } = useTranslation();
   const auth = useAuth();
   return auth.isAuthenticated ? (
     <Redirect href="/(root)" />

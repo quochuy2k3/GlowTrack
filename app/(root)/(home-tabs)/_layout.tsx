@@ -1,10 +1,13 @@
-import { Tabs } from 'expo-router';
-import { t } from 'i18next';
-import { BookMarked, House, List, Map, User } from '@tamagui/lucide-icons';
-import { useAuth } from '@/contexts/auth';
 import TabBottom from '@/assets/svgs/tabBottom';
-import { View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { useAuth } from '@/contexts/auth';
 import commonColor from '@/theme/commonColor';
+import variables from '@/theme/commonColor';
+import { CalendarClock, HeartHandshake, House, User } from '@tamagui/lucide-icons';
+import { Tabs } from 'expo-router';
+import LottieView from 'lottie-react-native';
+import { useTranslation } from 'react-i18next';
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+
 // SVG background for the tab bar
 const TabBarBackground = () => {
   return (
@@ -22,6 +25,7 @@ const TabBarBackground = () => {
 };
 
 export default function Layout() {
+  const { t } = useTranslation();
   const auth = useAuth();
 
   return (
@@ -51,15 +55,15 @@ export default function Layout() {
           }}
         />
         <Tabs.Screen
-          name="my-learning"
+          name="routine"
           options={{
-            title: 'Hành Trình',
-            tabBarIcon: ({ color }) => <Map color={color as any} />,
+            title: t('routine'),
+            tabBarIcon: ({ color }) => <CalendarClock color={color as any} />,
             headerShown: false,
           }}
         />
         <Tabs.Screen
-          name="library"
+          name="scan"
           options={{
             title: t('library.title'),
             tabBarLabel: () => null,
@@ -67,19 +71,25 @@ export default function Layout() {
               return (
                 <View style={styles.centerButtonContainer}>
                   <View style={styles.centerButton}>
-                    <BookMarked size={30} color={color as any} />
+                    <LottieView
+                      source={require('@/assets/json/scanIcon.json')}
+                      autoPlay
+                      speed={1.3}
+                      loop
+                      style={styles.animation}
+                    />
                   </View>
                 </View>
               );
             },
-            tabBarButton: props => <TouchableOpacity {...props} activeOpacity={1} />,
           }}
         />
         <Tabs.Screen
-          name="category"
+          name="couple"
           options={{
-            title: 'BXH',
-            tabBarIcon: ({ color }) => <List color={color as any} />,
+            title: t('couple'),
+            tabBarIcon: ({ color }) => <HeartHandshake color={color as any} />,
+            headerShown: false,
           }}
         />
         <Tabs.Screen
@@ -106,21 +116,26 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
     left: '50%',
-    transform: [{ translateX: -35 }],
+    transform: [{ translateX: -36 }],
     zIndex: 10,
   },
   centerButton: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: 'rgb(198, 195, 195)',
+    width: variables.scale(140),
+    height: variables.scale(140),
+    borderRadius: variables.scale(70),
+    padding: variables.scale(14),
+    backgroundColor: '#FEF6EB',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: '#fff',
+    borderColor: '#A0E7E5',
   },
   centerButtonText: {
     color: '#fff',
     fontSize: 30,
+  },
+  animation: {
+    width: '100%',
+    height: '100%',
   },
 });

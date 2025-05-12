@@ -150,7 +150,6 @@ const mockWeatherData = {
 export const WeatherFolder = React.memo(({ item, drag, isActive }: any) => {
   const { city, weatherData, errorMsg } = useUserLocation();
   const { t } = useTranslation();
-  // console.log('weatherData', weatherData?.current);
 
   const backgroundColor = useMemo(() => {
     if (!weatherData?.current) return ['#FFFFFF', '#FFFFFF'];

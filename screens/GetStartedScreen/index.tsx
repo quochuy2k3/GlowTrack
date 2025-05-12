@@ -1,86 +1,179 @@
-import { StyleSheet, Image, SafeAreaView } from 'react-native';
+import { StyleSheet, Image, SafeAreaView, Dimensions } from 'react-native';
 import { View, Text, Button } from 'tamagui';
 import { LinearGradient } from 'expo-linear-gradient';
 import variables from '@/theme/commonColor';
 import commonColor from '@/theme/commonColor';
 import { LucideArrowLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import * as React from 'react';
+import Animated, {
+  FadeIn,
+  FadeInDown,
+  FadeInUp,
+  SlideInDown,
+  SlideInUp,
+  ZoomIn,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+  withSequence,
+  withDelay,
+  Easing,
+  Layout,
+} from 'react-native-reanimated';
+
+const { width, height } = Dimensions.get('window');
 
 export default function GetStartedScreen() {
   const router = useRouter();
 
+  // Animation values
+  const logoScale = useSharedValue(1);
+  const titleOpacity = useSharedValue(0);
+  const backgroundPosition = useSharedValue(-300);
+
+  // Start animations
+  React.useEffect(() => {
+    // Subtle floating animation for logo
+    logoScale.value = withRepeat(
+      withSequence(
+        withTiming(1.05, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0.95, { duration: 2000, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1, // -1 = infinite repeat
+      true // reverse
+    );
+
+    // Animate background
+    backgroundPosition.value = withTiming(-280, { duration: 1500 });
+
+    // Animate title
+    titleOpacity.value = withDelay(400, withTiming(1, { duration: 800 }));
+  }, []);
+
+  // Define animated styles
+  const animatedLogoStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: logoScale.value }],
+  }));
+
+  const animatedBackgroundStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: backgroundPosition.value }],
+  }));
+
+  const animatedTitleStyle = useAnimatedStyle(() => ({
+    opacity: titleOpacity.value,
+    transform: [{ translateY: withTiming(0, { duration: 800 }) }, { scale: titleOpacity.value }],
+  }));
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.vectorBgContainer}>
+      <Animated.View style={[styles.vectorBgContainer, animatedBackgroundStyle]}>
         <Image width={90} source={require('@/assets/images/Vectorbg3.png')} />
-      </View>
+      </Animated.View>
 
       <View style={styles.headerContainer}>
-        <Button
-          backgroundColor="transparent"
-          width={50}
-          rounded={30}
-          height={50}
-          p={3}
-          onPress={() => router.back()}
-        >
-          <LucideArrowLeft color="white" />
-        </Button>
+        <Animated.View entering={FadeIn.duration(300).delay(200)} layout={Layout.springify()}>
+          <Button chromeless size="$4" circular onPress={() => router.back()}>
+            <LucideArrowLeft width={24} height={24} color="#FF9A8B" />
+          </Button>
+        </Animated.View>
+
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Welcome</Text>
+          <Animated.View style={animatedTitleStyle}>
+            <Text style={styles.title}>Welcome</Text>
+          </Animated.View>
         </View>
       </View>
 
       <View style={styles.screenContainer}>
-        <View style={styles.logoContainer}>
+        <Animated.View
+          style={[styles.logoContainer, animatedLogoStyle]}
+          entering={ZoomIn.duration(600).delay(300)}
+          layout={Layout.springify()}
+        >
           <Image source={require('@/assets/images/logoNoBg.png')} style={styles.logo} />
-        </View>
+        </Animated.View>
 
         <View style={styles.footerContainer}>
-          <LinearGradient
-            colors={['#FF9A8B', '#FFD07B']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.gradientButton}
-          >
-            <Button
-              backgroundColor="transparent"
-              width="100%"
-              height="100%"
-              onPress={() => router.push('/(signin)/(modals)/sign-in')}
-            >
-              <Text style={styles.buttonText}>Sign Up</Text>
-            </Button>
-          </LinearGradient>
+          <Animated.View entering={SlideInUp.duration(400).delay(600)} layout={Layout.springify()}>
+            <View style={styles.buttonWrapperStyle}>
+              <LinearGradient
+                colors={['#FF9A8B', '#FFD07B']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.gradientButton}
+              />
+              <Button
+                chromeless
+                style={styles.buttonOverlayStyle}
+                pressStyle={{ opacity: 0.9 }}
+                onPress={() => router.push('/(signin)/(modals)/sign-in')}
+              >
+                <Text style={styles.buttonText}>Sign Up</Text>
+              </Button>
+            </View>
+          </Animated.View>
 
-          <LinearGradient
-            colors={['#A0E7E5', '#B4F8C8']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.gradientButton}
-          >
-            <Button
-              backgroundColor="transparent"
-              width="100%"
-              height="100%"
-              onPress={() => router.push('/(signin)/sign-up')}
-            >
-              <Text style={styles.buttonText}>Sign In</Text>
-            </Button>
-          </LinearGradient>
+          <Animated.View entering={SlideInUp.duration(400).delay(800)} layout={Layout.springify()}>
+            <View style={styles.buttonWrapperStyle}>
+              <LinearGradient
+                colors={['#A0E7E5', '#B4F8C8']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.gradientButton}
+              />
+              <Button
+                chromeless
+                style={styles.buttonOverlayStyle}
+                pressStyle={{ opacity: 0.9 }}
+                onPress={() => router.push('/(signin)/sign-up')}
+              >
+                <Text style={styles.buttonText}>Sign In</Text>
+              </Button>
+            </View>
+          </Animated.View>
         </View>
 
-        <View style={styles.copyrightContainer}>
+        <Animated.View
+          style={styles.copyrightContainer}
+          entering={FadeIn.duration(300).delay(1000)}
+          layout={Layout.springify()}
+        >
           <Text style={styles.copyright}>© 2025, All rights reserved</Text>
-        </View>
+        </Animated.View>
       </View>
+
+      {/* Floating animated elements */}
+      <Animated.View
+        style={[styles.floatingElement, { top: height * 0.2, left: width * 0.1 }]}
+        entering={FadeIn.duration(1000).delay(500)}
+        layout={Layout.springify()}
+      >
+        <LinearGradient
+          colors={['rgba(255, 154, 139, 0.4)', 'rgba(255, 208, 123, 0.2)']}
+          style={styles.floatingGradient}
+        />
+      </Animated.View>
+
+      <Animated.View
+        style={[styles.floatingElement, { bottom: height * 0.3, right: width * 0.15 }]}
+        entering={FadeIn.duration(1000).delay(700)}
+        layout={Layout.springify()}
+      >
+        <LinearGradient
+          colors={['rgba(160, 231, 229, 0.3)', 'rgba(180, 248, 200, 0.2)']}
+          style={styles.floatingGradient}
+        />
+      </Animated.View>
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgb(254 246 235)',
+    backgroundColor: '#FEF6EB',
   },
   vectorBgContainer: {
     position: 'absolute',
@@ -102,7 +195,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: commonColor.fontFamilyWinkySans,
-    color: '#fff',
+    color: '#A0E7E5',
     fontSize: variables.scale(70),
   },
   screenContainer: {
@@ -116,18 +209,33 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: variables.scale(40),
   },
-  gradientButton: {
+  buttonWrapperStyle: {
     width: 140,
     height: 50,
+    marginHorizontal: variables.scale(10),
+    borderRadius: 30,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  gradientButton: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: variables.scale(10),
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  buttonOverlayStyle: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 30,
   },
   buttonText: {
     color: '#fff',
@@ -146,5 +254,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: variables.scale(20),
     marginTop: variables.scale(10),
+  },
+  floatingElement: {
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    overflow: 'hidden',
+    opacity: 0.6,
+  },
+  floatingGradient: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 50,
   },
 });

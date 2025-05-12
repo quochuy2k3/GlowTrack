@@ -237,5 +237,22 @@
   "Password": "Password",
   "InvalidPassword": "Invalid password",
   "ForgotPassword": "Forgot password?",
-  "SignUp": "Sign Up"
+  "SignUp": "Sign Up",
+  "DetailTracker": "Detail Tracker",
+  "lottie1": "Journey together",
+  "lottie2": "Personal journey",
+  "lottie3": "High-tech",
+  "lottie4": "Improve habits",
+  "subLottie1": "More confident every day",
+  "subLottie2": "Track from your footprints",
+  "subLottie3": "AI support will help you improve your journey",
+  "subLottie4": "Discipline forms habits",
+  "english": "English",
+  "vietnamese": "Vietnamese",
+  "streaks": "Streaks",
+  "day": "Day",
+  "days": "Days",
+  "city": "City",
+  "couple": "Couple",
+  "routine": "Routine"
 }

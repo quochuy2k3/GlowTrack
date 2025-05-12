@@ -8,7 +8,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import LottieView from 'lottie-react-native';
 import { OnboardingData } from '../data/data';
-
+import { useTranslation } from 'react-i18next';
+import commonColor from '@/theme/commonColor';
+import variables from '@/theme/commonColor';
 type Props = {
   index: number;
   x: SharedValue<number>;
@@ -17,7 +19,7 @@ type Props = {
 
 const RenderItem = ({ index, x, item }: Props) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
-
+  const { t } = useTranslation();
   const lottieAnimationStyle = useAnimatedStyle(() => {
     const translateYAnimation = interpolate(
       x.value,
@@ -63,14 +65,17 @@ const RenderItem = ({ index, x, item }: Props) => {
         <LottieView
           source={item.animation}
           style={{
-            width: SCREEN_WIDTH * 0.9,
-            height: SCREEN_WIDTH * 0.9,
+            width: SCREEN_WIDTH,
+            height: SCREEN_WIDTH,
           }}
           autoPlay
           loop
         />
       </Animated.View>
-      <Text style={[styles.itemText, { color: item.textColor }]}>{item.text}</Text>
+      <View style={styles.textContainer}>
+        <Text style={[styles.itemText, { color: item.textColor }]}>{t(item.text as any)}</Text>
+        <Text style={[styles.subText, { color: item.textColor }]}>{t(item.subtext as any)}</Text>
+      </View>
     </View>
   );
 };
@@ -82,18 +87,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-around',
     alignItems: 'center',
-    marginBottom: 120,
+    marginBottom: variables.scale(150),
   },
   itemText: {
     textAlign: 'center',
-    fontSize: 44,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    marginHorizontal: 20,
+    fontSize: variables.scale(60),
+    fontFamily: commonColor.fontFamilyIcielPantonBold,
+    marginBottom: variables.scale(10),
+    marginHorizontal: variables.scale(40),
   },
   circleContainer: {
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
     justifyContent: 'flex-end',
+  },
+  textContainer: {
+    paddingHorizontal: variables.scale(40),
+  },
+  subText: {
+    textAlign: 'center',
+    fontFamily: commonColor.fontFamilyLight,
+    fontSize: variables.scale(34),
   },
 });

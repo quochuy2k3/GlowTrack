@@ -16,6 +16,25 @@ export default function Layout() {
           title: t('home.title'),
         }}
       />
+      <Stack.Screen
+        name="(scan)"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="(tracker)"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="(modals)"
+        options={{
+          presentation: 'modal',
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

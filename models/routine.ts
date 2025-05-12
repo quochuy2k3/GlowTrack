@@ -30,7 +30,15 @@ export interface RoutineUpdateSchema {
   push_token?: string;
   days?: DaySchema[];
 }
+
 export interface RoutineTodayResponse {
   routine_name: string;
+  push_token?: string;
   today: DaySchema;
+}
+
+export interface UserRoutineResponse {
+  routine_name: string;
+  push_token?: string;
+  days: DaySchema[];
 }

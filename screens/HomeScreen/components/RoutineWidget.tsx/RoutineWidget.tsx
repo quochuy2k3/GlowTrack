@@ -1,25 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Switch,
-  Animated,
-  Easing,
-  ScrollView,
-  Alert,
-} from 'react-native';
+import { useAuth } from '@/contexts/auth';
+import { useNotification } from '@/contexts/NoticationContext';
+import { RoutineTodayResponse } from '@/models/routine';
+import { useServices } from '@/services';
 import commonColor from '@/theme/commonColor';
 import variables from '@/theme/commonColor';
-import { Check } from '@tamagui/lucide-icons';
-import { useTranslation } from 'react-i18next';
-import { useQuery } from 'react-query';
-import { useServices } from '@/services';
-import { useAuth } from '@/contexts/auth';
-import { RoutineTodayResponse } from '@/models/routine';
 import { registerForPushNotificationsAsync } from '@/utils/registerNotification';
-import { useNotification } from '@/contexts/NoticationContext';
+import { useIsFocused } from '@react-navigation/native';
+import { Check } from '@tamagui/lucide-icons';
+import { useRouter } from 'expo-router';
+import { LucideClock } from 'lucide-react-native';
+import React, { MutableRefObject, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  Alert,
+  Animated,
+  Easing,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { useQuery } from 'react-query';
+
 interface Step {
   step_order: number;
   step_name: string;
@@ -30,35 +33,42 @@ interface Session {
   status: 'pending' | 'done' | 'not_done';
   steps: Step[];
 }
+interface RoutineCardProps {
+  onRefresh: MutableRefObject<() => void>;
+}
 
-const RoutineCard = ({}) => {
+const RoutineCard = ({ onRefresh }: RoutineCardProps) => {
+  const isFocused = useIsFocused();
+  const router = useRouter();
   const { notification, expoPushToken, error, setExpoPushToken, setError } = useNotification();
   const [routineData, setRoutineData] = useState<RoutineTodayResponse | null>(null);
   const services = useServices();
   const auth = useAuth();
   const [animatedSessions, setAnimatedSessions] = useState<{ [key: number]: Animated.Value }>({});
   const [pushToken, setPushToken] = useState<string | null>(expoPushToken);
-  const [notiEnabled, setNotiEnabled] = useState(true);
+  const [notiEnabled, setNotiEnabled] = useState<boolean | null>(null);
   const { t } = useTranslation();
 
-  // Hàm bật/tắt thông báo
   const onToggleNoti = async () => {
     try {
       if (notiEnabled) {
         // Tắt thông báo
         setNotiEnabled(false);
         setPushToken(null);
+        updatePushToken('');
       } else {
         // Yêu cầu quyền thông báo và bật thông báo
         if (expoPushToken) {
           setPushToken(expoPushToken);
           setNotiEnabled(true);
+          updatePushToken(expoPushToken);
         } else {
           registerForPushNotificationsAsync().then(
             token => {
               setExpoPushToken(token);
               setPushToken(token);
               setNotiEnabled(true);
+              updatePushToken(token);
             },
             error => setError(error)
           );
@@ -68,11 +78,25 @@ const RoutineCard = ({}) => {
       Alert.alert('Error', 'Không thể thực hiện hành động này');
     }
   };
-  const { data: routineToday, isLoading: isLoadingRoutineDay } = useQuery({
+  const {
+    data: routineToday,
+    isLoading: isLoadingRoutineDay,
+    refetch: queryFn,
+  } = useQuery({
     queryFn: services.UserRoutineService.getRoutineToday,
     queryKey: ['routineToday'],
     enabled: auth.isAuthenticated,
   });
+  useEffect(() => {
+    if (onRefresh) {
+      onRefresh.current = queryFn;
+    }
+  }, [onRefresh, queryFn]);
+  useEffect(() => {
+    if (isFocused) {
+      queryFn();
+    }
+  }, [isFocused, queryFn]);
   const toggleSession = (index: number) => {
     const animatedValue = animatedSessions[index];
     if (!animatedValue) return;
@@ -86,12 +110,34 @@ const RoutineCard = ({}) => {
     }).start();
   };
   useEffect(() => {
-    services.UserRoutineService.updatePushToken(pushToken ?? '');
-  }, [pushToken]);
+    registerForPushNotificationsAsync().then(
+      token => {
+        if (token) {
+          setExpoPushToken(token);
+          updatePushToken(token);
+          setPushToken(token);
+          setNotiEnabled(true);
+        } else {
+          setNotiEnabled(false);
+          setPushToken(null);
+          updatePushToken(token);
+        }
+      },
+      error => {
+        setNotiEnabled(false);
+        setPushToken(null);
+        setError(error);
+      }
+    );
+  }, []);
+
+  const updatePushToken = async (pushToken: string) => {
+    await services.UserRoutineService.updatePushToken(pushToken ?? '');
+  };
   useEffect(() => {
     const fetchRoutineData = async () => {
       if (!routineToday) return;
-
+      console.log('testroutineToday', routineToday);
       const now = new Date();
       const sessions = routineToday.today.sessions;
 
@@ -160,18 +206,18 @@ const RoutineCard = ({}) => {
   const getStatusBadgeColor = (status: Session['status']) => {
     switch (status) {
       case 'pending':
-        return '#CEB8E4';
+        return '#FFC107';
       case 'done':
         return '#A5D6A7';
       case 'not_done':
-        return '#EF9A9A';
+        return '#F44336';
     }
   };
 
   const getSessionBackgroundColor = (status: Session['status']) => {
     switch (status) {
       case 'pending':
-        return '#F3E8FB';
+        return '#FFF8E1';
       case 'done':
         return '#E8F5E9';
       case 'not_done':
@@ -181,15 +227,61 @@ const RoutineCard = ({}) => {
 
   if (!routineData) return <Text>Loading...</Text>;
 
+  const MarkDoneSession = async (session: Session, sessionIndex: number) => {
+    try {
+      // Tạo bản sao của dữ liệu hiện tại
+      if (!routineData) return;
+
+      const updatedRoutineData = { ...routineData };
+      const updatedSessions = [...updatedRoutineData.today.sessions];
+
+      // Cập nhật status thành "done"
+      updatedSessions[sessionIndex] = {
+        ...updatedSessions[sessionIndex],
+        status: 'done',
+      };
+
+      updatedRoutineData.today.sessions = updatedSessions;
+
+      // Cập nhật state và UI trước
+      setRoutineData(updatedRoutineData);
+
+      // Tạo payload để cập nhật lên server
+      const dayToUpdate = {
+        day_of_week: routineData.today.day_of_week,
+        sessions: updatedSessions.map(s => ({
+          ...s,
+          // Đảm bảo session đang được cập nhật có status là 'done'
+          status: s.time === session.time ? 'done' : s.status,
+        })),
+      };
+
+      // Gọi API để cập nhật ngày lên server
+      await services.UserRoutineService.updateDayofRoutine(dayToUpdate);
+
+      // Refresh dữ liệu từ server
+      queryFn();
+
+      // Hiển thị thông báo thành công (tùy chọn)
+      // Alert.alert('Success', 'Session đã được đánh dấu hoàn thành');
+    } catch (error) {
+      console.error('Error marking session as done:', error);
+      Alert.alert('Error', 'Không thể cập nhật trạng thái session');
+
+      // Nếu lỗi, refresh lại dữ liệu để đảm bảo UI đồng bộ với server
+      queryFn();
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.header}>
+      <TouchableOpacity style={styles.header} onPress={() => router.push('./routine')}>
         <View style={{ flex: 1 }}>
           <Text style={styles.title}>{routineData.routine_name}</Text>
           <Text style={styles.dayLabel}>{routineData.today.day_of_week}</Text>
         </View>
         <Switch
-          value={notiEnabled}
+          value={notiEnabled ?? false}
           onValueChange={onToggleNoti}
           trackColor={{ false: '#767577', true: '#C5DFEC' }}
           thumbColor={notiEnabled ? '#FFFF' : '#f4f3f4'}
@@ -219,9 +311,8 @@ const RoutineCard = ({}) => {
                 onPress={() => toggleSession(index)}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <Text style={styles.sessionTime}>
-                    {t('you_have_routine_at')} {session.time}
-                  </Text>
+                  <LucideClock size={20} color={getStatusBadgeColor(session.status)} />
+                  <Text style={styles.sessionTime}>{session.time}</Text>
                   {session.status === 'done' && <Check size={18} color="#4CAF50" />}
                 </View>
                 <View
@@ -275,7 +366,12 @@ const RoutineCard = ({}) => {
                   ))}
                 </View>
                 {session.status === 'pending' && (
-                  <TouchableOpacity style={styles.markAsDoneContainer}>
+                  <TouchableOpacity
+                    style={styles.markAsDoneContainer}
+                    onPress={() => {
+                      MarkDoneSession(session, index);
+                    }}
+                  >
                     <Check size={24} color={getStatusBadgeColor(session.status)} />
                   </TouchableOpacity>
                 )}
@@ -335,7 +431,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: variables.scale(12),
   },
   statusText: {
-    color: '#333',
+    color: '#fff',
     fontWeight: '600',
     fontSize: variables.scale(18),
   },
@@ -359,6 +455,8 @@ const styles = StyleSheet.create({
     borderRadius: variables.scale(20),
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: variables.scale(30),
+
     zIndex: 1,
   },
   verticalLine: {
@@ -373,13 +471,12 @@ const styles = StyleSheet.create({
   stepNumber: {
     color: commonColor.ColorWhite,
     fontWeight: 'bold',
-    fontSize: variables.scale(16),
+    fontSize: variables.scale(20),
   },
   stepName: {
-    fontSize: variables.scale(24),
+    fontSize: variables.scale(26),
     color: 'black',
     paddingTop: variables.scale(5),
-    paddingLeft: variables.scale(12),
     fontWeight: '500',
     flexShrink: 1,
   },

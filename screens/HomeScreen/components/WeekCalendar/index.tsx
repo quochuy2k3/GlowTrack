@@ -1,79 +1,116 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { XStack } from 'tamagui';
+import React, { useState, useEffect, MutableRefObject } from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+} from 'react-native';
+import { XStack, Spinner, YStack } from 'tamagui';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import DayCard from './components/DayCard';
 import variables from '@/theme/commonColor';
 import commonColor from '@/theme/commonColor';
 import IconArrowRight from '@/assets/svgs/IconArrowRight';
-export default function WeekCalendar() {
+import { useServices } from '@/services';
+import { useQuery } from 'react-query';
+import { useAuth } from '@/contexts/auth';
+import { useRouter } from 'expo-router';
+
+interface WeekCalendarProps {
+  onRefresh?: MutableRefObject<(() => void) | undefined>;
+}
+
+export default function WeekCalendar({ onRefresh }: WeekCalendarProps) {
+  const services = useServices();
+  const auth = useAuth();
   const { t } = useTranslation();
   const [currentDay, setCurrentDay] = useState(new Date().getDate());
-  const [selectedDay, setSelectedDay] = useState(null);
-  const [weekData, setWeekData] = useState([]);
-  const weekDays = [t('Mon'), t('Tue'), t('Wed'), t('Thu'), t('Fri'), t('Sat'), t('Sun')];
+  const router = useRouter();
 
-  const getListDaysOfWeek = () => {
-    const startOfWeek = moment().startOf('isoWeek');
-    const daysOfWeek = [];
-
-    for (let i = 0; i < 7; i++) {
-      daysOfWeek.push({
-        date: startOfWeek.clone().add(i, 'days').format('YYYY-MM-DD'),
-        day: startOfWeek.clone().add(i, 'days').format('D'),
-        weekDay: weekDays[i],
-      });
-    }
-
-    return daysOfWeek;
-  };
+  // Query to fetch week data
+  const {
+    data: weekData,
+    isLoading,
+    isError,
+    refetch: refetchWeekData,
+  } = useQuery({
+    queryKey: ['weekData'],
+    queryFn: () => services.TrackerService.getWeekTracker(),
+    enabled: auth.isAuthenticated,
+    staleTime: 0, // Data is always stale, forcing refetch when components remount
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+  });
 
   useEffect(() => {
     const currentDate = new Date();
     setCurrentDay(currentDate.getDate());
-
-    generateFakeData();
   }, []);
 
-  const generateFakeData = () => {
-    const daysOfWeek = getListDaysOfWeek();
-    const fakeData = daysOfWeek.map(day => {
-      return {
-        date: day.date,
-        isHasValue: Math.random() > 0.5,
-      };
-    });
-    setWeekData(fakeData);
-  };
+  // Expose refetch function to parent component
+  useEffect(() => {
+    if (onRefresh) {
+      onRefresh.current = refetchWeekData;
+    }
+  }, [onRefresh, refetchWeekData]);
 
-  const handleDayPress = (day: string) => {
-    setSelectedDay(day);
-  };
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity style={styles.title} onPress={() => router.push('../(tracker)')}>
+          <Text style={styles.titleText}>{t('Tracker')}</Text>
+          <IconArrowRight />
+        </TouchableOpacity>
+        <View style={styles.spinnerContainer}>
+          <Spinner size="large" color={commonColor.btnPrimaryColor} />
+        </View>
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity style={styles.title} onPress={() => router.push('../(tracker)')}>
+          <Text style={styles.titleText}>{t('Tracker')}</Text>
+          <IconArrowRight />
+        </TouchableOpacity>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Error loading data</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={() => refetchWeekData()}>
+            <Text style={styles.retryText}>Retry</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.title}>
+      <TouchableOpacity style={styles.title} onPress={() => router.push('../(tracker)')}>
         <Text style={styles.titleText}>{t('Tracker')}</Text>
         <IconArrowRight />
       </TouchableOpacity>
-      <XStack gap="$1" px="$3" style={{ flex: 1 }} justifyContent="space-between">
-        {getListDaysOfWeek().map((day, index) => {
-          const dayData = weekData.find(d => d.date === day.date);
+      <View style={styles.daysContainer}>
+        {Array.isArray(weekData) &&
+          weekData.map((day: any, index: number) => {
+            const dayData =
+              Array.isArray(weekData) && weekData.find((d: any) => d.date === day.date);
 
-          return (
-            <DayCard
-              key={day.date}
-              day={day}
-              index={index}
-              isSelected={selectedDay === day.date}
-              isToday={day.day == currentDay}
-              hasDetail={dayData && dayData.isHasValue}
-              onPress={handleDayPress}
-            />
-          );
-        })}
-      </XStack>
+            return (
+              <DayCard
+                key={day.date}
+                day={day}
+                index={index}
+                isToday={moment(day.date).date() === currentDay}
+                hasDetail={dayData && dayData.isHasValue}
+              />
+            );
+          })}
+      </View>
     </View>
   );
 }
@@ -107,5 +144,38 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: variables.scale(36),
     fontFamily: variables.fontFamilyBold,
+  },
+  daysContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: variables.scale(12),
+  },
+  spinnerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    fontSize: variables.scale(16),
+    fontFamily: variables.fontFamilyMedium,
+    color: '#FF3B30',
+    marginBottom: variables.scale(10),
+  },
+  retryButton: {
+    paddingHorizontal: variables.scale(20),
+    paddingVertical: variables.scale(8),
+    backgroundColor: commonColor.btnPrimaryColor,
+    borderRadius: variables.scale(20),
+  },
+  retryText: {
+    fontSize: variables.scale(14),
+    fontFamily: variables.fontFamilyMedium,
+    color: commonColor.ColorWhite,
   },
 });

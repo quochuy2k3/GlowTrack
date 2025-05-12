@@ -1,25 +1,23 @@
-import { useEffect, useRef, useState } from 'react';
-import {
-  Animated,
-  StyleSheet,
-  Text,
-  SafeAreaView,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  Dimensions,
-} from 'react-native';
-import { YStack, XStack, Spinner, Avatar } from 'tamagui';
-import { Bell } from '@tamagui/lucide-icons';
-
-import { useQuery } from 'react-query';
-import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/auth';
 import { useServices } from '@/services';
 import variables from '@/theme/commonColor';
 import commonColor from '@/theme/commonColor';
+import { Bell } from '@tamagui/lucide-icons';
+import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  Animated,
+  Dimensions,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { useQuery } from 'react-query';
+import { Avatar, Spinner, XStack, YStack } from 'tamagui';
 
-import { useNotification } from '@/contexts/NoticationContext';
 const height = Dimensions.get('window').height;
 
 export default function LoginScreen() {
@@ -27,14 +25,6 @@ export default function LoginScreen() {
   const { t } = useTranslation();
   const auth = useAuth();
   const time = new Date().getHours();
-  const { notification, expoPushToken, error } = useNotification();
-
-  useEffect(() => {
-    console.log('useEffect triggered');
-    console.log('Notification:', notification);
-    console.log('Expo Push Token:', expoPushToken);
-    console.log('Error:', error);
-  }, []);
 
   // const { data: currentCourse, isLoading: isLoadingCurrentCourse } = useQuery({
   //   queryFn: services.UserCourseService.getCurrentLearnCourse,

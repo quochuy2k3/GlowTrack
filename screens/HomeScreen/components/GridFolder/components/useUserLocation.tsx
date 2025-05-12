@@ -1,7 +1,8 @@
+import { useAppState } from '@/contexts/app-state';
 import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
+import i18n from 'i18next';
 const WEATHER_API_KEY = '708b47fbcf8e4cb98f192659252803';
 
 type Coordinates = {
@@ -24,7 +25,7 @@ type WeatherData = {
 
 const useUserLocation = () => {
   const { t } = useTranslation();
-
+  const language = i18n.language;
   const [location, setLocation] = useState<Coordinates>({ latitude: 0, longitude: 0 });
   const [city, setCity] = useState<string>('');
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
@@ -52,7 +53,7 @@ const useUserLocation = () => {
         const cityName = city || region || '';
         setCity(cityName);
 
-        const url = `https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${coords.latitude},${coords.longitude}&lang=vi`;
+        const url = `https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${coords.latitude},${coords.longitude}&lang=${language}`;
 
         try {
           const res = await fetch(url);

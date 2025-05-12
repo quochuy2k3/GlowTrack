@@ -8,6 +8,7 @@ export interface UserProfile {
   phone: string;
   gender: string;
   role: string;
+  streak: number;
 }
 
 /**

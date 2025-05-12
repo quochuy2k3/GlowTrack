@@ -7,6 +7,11 @@ import * as MediaServices from './media';
 import * as TalentSkillsServices from './talent-skills';
 import * as AuthServices from './auth';
 import * as RoutineServices from './routine';
+import * as ScanServices from './scan';
+import * as TrackerServices from './tracker';
+import * as RequestServices from './requests';
+import * as CoupleServices from './couple';
+
 const services = {
   ...WidgetServices,
   ...NotificationServices,
@@ -17,6 +22,10 @@ const services = {
   ...TalentSkillsServices,
   ...AuthServices,
   ...RoutineServices,
+  ...ScanServices,
+  ...TrackerServices,
+  ...RequestServices,
+  ...CoupleServices,
 };
 
 export default services;

@@ -4,11 +4,18 @@ import { YStack } from 'tamagui';
 import variables from '@/theme/commonColor';
 import commonColor from '@/theme/commonColor';
 import moment from 'moment';
-export default function DayCard({ day, isSelected, isToday, onPress, hasDetail }) {
+import { useTranslation } from 'react-i18next';
+import { useRouter } from 'expo-router';
+export default function DayCard({ day, isToday, hasDetail }: any) {
+  const { t } = useTranslation();
+  const weekDays = [t('Sun'), t('Mon'), t('Tue'), t('Wed'), t('Thu'), t('Fri'), t('Sat')];
+  const weekDayIndex = moment(day.date).day();
+  const router = useRouter();
   const handlePress = () => {
-    onPress(day.date); // Pass the date to the onPress function
+    if (day.tracker_id && day.tracker_id.length > 0) {
+      router.push(`../(tracker)/detail?trackerId=${day.tracker_id}`);
+    }
   };
-
   const dotIcon = () => {
     const color = hasDetail
       ? commonColor.ColorMalachite
@@ -19,26 +26,12 @@ export default function DayCard({ day, isSelected, isToday, onPress, hasDetail }
   };
 
   return (
-    <TouchableOpacity
-    //   style={[
-    //     styles.card,
-    //     isSelected && styles.selectedCard,
-    //     isToday && styles.todayCard,
-    //     hasDetail && styles.hasDetailCard, // Add a special style for days with details
-    //   ]}
-    //   onPress={handlePress}
-    // >
-    //   <Text
-    //     style={[styles.dayText, isSelected && styles.selectedText, isToday && styles.todayText]}
-    //   >
-    //     {day.weekDay} {day.day}
-    //   </Text>
-    //   {hasDetail && <Text style={styles.detailText}>Has Details</Text>}{' '}
-    //   {/* Show a label if there are details */}
-    >
+    <TouchableOpacity onPress={handlePress} key={day.date}>
       <YStack style={[styles.container, isToday && styles.containerToday]}>
-        <Text style={styles.dayText}>{day.weekDay}</Text>
-        <Text style={[styles.numberDayText, isToday && styles.numberDayTextToday]}>{day.day}</Text>
+        <Text style={[styles.dayText]}>{weekDays[weekDayIndex]}</Text>
+        <Text style={[styles.numberDayText, isToday && styles.numberDayTextToday]}>
+          {moment(day.date).date()}
+        </Text>
         {day.date <= moment().format('YYYY-MM-DD') && dotIcon()}
       </YStack>
     </TouchableOpacity>

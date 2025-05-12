@@ -63,7 +63,8 @@
           "mode": "development"
         }
       ],
-      "expo-build-properties"
+      "expo-build-properties",
+      "expo-font"
     ],
     "extra": {
       "oneSignalAppId": "d99b7d24-953b-4b01-897b-24d00b64ec77",

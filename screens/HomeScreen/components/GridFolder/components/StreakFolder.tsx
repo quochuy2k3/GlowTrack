@@ -12,7 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const width = Dimensions.get('window').width;
 
-export const StreakFolder = React.memo(({ item, drag, isActive }: any) => {
+export const StreakFolder = React.memo(({ item, drag, isActive, streak }: any) => {
   const { t } = useTranslation();
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
@@ -57,7 +57,7 @@ export const StreakFolder = React.memo(({ item, drag, isActive }: any) => {
         style={styles.folderContainer}
       >
         <View style={styles.header}>
-          <Text style={styles.titleText}>Streaks</Text>
+          <Text style={styles.titleText}>{t('streaks')}</Text>
         </View>
 
         <XStack flex={1} alignItems="center" mt={'$-4'}>
@@ -65,8 +65,8 @@ export const StreakFolder = React.memo(({ item, drag, isActive }: any) => {
             <MaterialCommunityIcons name="fire" size={70} color="#FF6B6B" />
           </Animated.View>
           <YStack flex={1} justifyContent="center" alignItems="center">
-            <Text style={styles.streakCount}>21</Text>
-            <Text style={styles.streakText}>Ngày</Text>
+            <Text style={styles.streakCount}>{streak ? streak : 0}</Text>
+            <Text style={styles.streakText}>{streak > 1 ? t('days') : t('day')}</Text>
           </YStack>
         </XStack>
       </LinearGradient>

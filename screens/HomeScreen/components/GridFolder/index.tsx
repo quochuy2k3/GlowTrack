@@ -8,7 +8,7 @@ import { WeatherFolder } from './components/WeatherFolder';
 import { StreakFolder } from './components/StreakFolder';
 const width = Dimensions.get('window').width;
 
-export default function GridFolder() {
+export default function GridFolder({ streak }: { streak: number }) {
   const [data, setData] = useState([
     { key: '1', title: 'Folder 1', description: 'Description 1' },
     { key: '2', title: 'Folder 2', description: 'Description 2' },
@@ -18,7 +18,7 @@ export default function GridFolder() {
     if (item.key === '1') {
       return <WeatherFolder item={item} drag={drag} isActive={isActive} />;
     } else {
-      return <StreakFolder item={item} drag={drag} isActive={isActive} />;
+      return <StreakFolder item={item} drag={drag} isActive={isActive} streak={streak} />;
     }
   };
 

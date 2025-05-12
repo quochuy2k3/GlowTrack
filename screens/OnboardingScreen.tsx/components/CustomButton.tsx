@@ -55,7 +55,7 @@ const CustomButton = ({ flatListRef, flatListIndex, dataLength, x }: Props) => {
     const backgroundColor = interpolateColor(
       x.value,
       [0, SCREEN_WIDTH, 2 * SCREEN_WIDTH, 3 * SCREEN_WIDTH],
-      ['#005b4f', '#1e2169', '#F15937', '#005b4f']
+      ['#005b4f', '#rgb(109, 20, 100)', '#1e2169', '#005b4f']
     );
 
     return {

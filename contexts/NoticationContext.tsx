@@ -34,11 +34,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   const responseListener = useRef<Subscription>();
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then(
-      token => setExpoPushToken(token),
-      error => setError(error)
-    );
-
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       console.log('🔔 Notification Received: ', notification);
       setNotification(notification);
