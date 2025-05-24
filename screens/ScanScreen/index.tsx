@@ -27,6 +27,7 @@ import {
   PanResponderInstance,
   Platform,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -54,8 +55,35 @@ interface ClassSummary {
 }
 
 interface ApiResponse {
-  class_summary: Record<string, ClassSummary>;
-  image: string; // base64 encoded image
+  class_summary?: Record<string, ClassSummary> | null;
+  image?: string | null; // base64 encoded image
+}
+
+interface Assessment {
+  date: string;
+  time: string;
+  acne_count: number;
+  acne_types: string[];
+  skin_condition: string;
+  safety_rating: string;
+  basic_care_recommendations: string[];
+  medical_recommendations: string[];
+  disclaimer: string;
+}
+
+interface SkinAnalysisResult {
+  assessment: Assessment;
+  cham_soc_co_ban: string[];
+  chi_tiet_mun: { [key: string]: string };
+  danh_gia_muc_do: string;
+  khuyen_cao_y_te: string;
+  luu_y_quan_trong: string[];
+  tong_quan: string;
+}
+
+interface AnalysisResponse {
+  result: SkinAnalysisResult;
+  notice: string;
 }
 
 export default function ScanScreen() {
@@ -79,11 +107,9 @@ export default function ScanScreen() {
   const [initialPanelHeight] = useState(Dimensions.get('window').height * 0.4);
   const [collapsedPanelHeight] = useState(Dimensions.get('window').height * 0.2);
   const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
-  const [recommendations, setRecommendations] = useState<string[]>([
-    '• Visit a dermatologist for a full assessment',
-    '• Maintain a gentle skincare routine',
-    '• Avoid touching or squeezing detected spots',
-  ]);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResponse | null>(null);
+  const [recommendations, setRecommendations] = useState<string[]>([]);
+  const [notice, setNotice] = useState<string>('');
 
   const router = useRouter();
   const camRef = useRef<CameraView>(null);
@@ -176,33 +202,36 @@ export default function ScanScreen() {
   }
 
   // Simulate calling Gemini API after successful scan
-  const fetchGeminiRecommendations = async () => {
+  const fetchGeminiRecommendations = async (result: ApiResponse) => {
     setIsLoadingRecommendations(true);
 
-    // Simulate API call with timeout
-    return new Promise<string[]>(resolve => {
-      setTimeout(() => {
-        // Fake response from Gemini API
-        const geminiRecommendations = [
-          '• Visit a dermatologist for a full assessment',
-          '• Maintain a gentle skincare routine',
-          '• Avoid touching or squeezing detected spots',
-        ];
+    try {
+      if (!result.image) {
+        throw new Error('No image data available for analysis');
+      }
 
-        // Add condition-specific recommendations
-        if (Object.keys(classSummary).some(condition => condition === 'purulent')) {
-          geminiRecommendations.push(
-            '• For purulent spots, consider using products with benzoyl peroxide'
-          );
-        }
+      const response = await service.ScanService.analyze(result.image, result.class_summary);
+      const analysisResponse = response as unknown as AnalysisResponse;
 
-        if (Object.keys(classSummary).some(condition => condition === 'papular')) {
-          geminiRecommendations.push('• For papular spots, gentle exfoliation may help');
-        }
+      setAnalysisResult(analysisResponse);
+      setNotice(analysisResponse.notice);
 
-        resolve(geminiRecommendations);
-      }, 3000); // 3 second timeout
-    });
+      // Combine all recommendations
+      const allRecommendations = [
+        ...analysisResponse.result.cham_soc_co_ban,
+        analysisResponse.result.khuyen_cao_y_te,
+        ...analysisResponse.result.luu_y_quan_trong,
+      ];
+
+      setRecommendations(allRecommendations);
+      setIsLoadingRecommendations(false);
+
+      return analysisResponse;
+    } catch (error) {
+      console.error('Error fetching recommendations:', error);
+      setIsLoadingRecommendations(false);
+      return null;
+    }
   };
 
   async function processPhoto() {
@@ -242,17 +271,18 @@ export default function ScanScreen() {
         // Get the response from the service
         const response = await service.ScanService.predict(formData);
         // Extract data from the axios response
-        const result = response.data as unknown as ApiResponse;
+        const result = response as unknown as ApiResponse;
 
         setClassSummary(result.class_summary || {});
-        setProcessedImageBase64(result.image);
+        setProcessedImageBase64(result.image || null);
 
         setProcessingProgress(1);
         setTimeout(() => {
           setScanState(ScanState.RESULTS);
           // Start fetching Gemini recommendations when results are shown
-          fetchGeminiRecommendations().then(geminiRecommendations => {
-            setRecommendations(geminiRecommendations);
+          fetchGeminiRecommendations(result).then(geminiRecommendations => {
+            // setRecommendations(geminiRecommendations);
+            console.log(geminiRecommendations);
             setIsLoadingRecommendations(false);
           });
         }, 500);
@@ -401,86 +431,153 @@ export default function ScanScreen() {
                 <Text style={styles.panelIndicatorText}>
                   {isPanelOpen ? 'Swipe down to minimize' : 'Pull up for details'}
                 </Text>
+
                 {isPanelOpen && (
-                  <View style={styles.resultContentContainer}>
-                    <Text style={styles.resultsTitle}>Analysis Results</Text>
-                    {Object.keys(classSummary).length >= 0 ? (
-                      <View style={styles.resultsList}>
-                        {/* Color legend */}
-                        <View style={styles.legendContainer}>
-                          <Text style={styles.legendTitle}>Detected Skin Conditions</Text>
-                          {Object.entries(classSummary).map(([condition, info], index) => (
-                            <View key={index} style={styles.legendRow}>
-                              <View style={[styles.legendColor, { backgroundColor: info.color }]} />
-                              <Text style={styles.legendText}>
-                                {condition.charAt(0).toUpperCase() + condition.slice(1)}
-                              </Text>
-                              <View style={styles.countBadge}>
-                                <Text style={styles.countText}>{info.count}</Text>
-                              </View>
+                  <View style={styles.mainScrollContainer}>
+                    <ScrollView
+                      style={styles.scrollableContent}
+                      showsVerticalScrollIndicator={true}
+                      indicatorStyle="white"
+                      bounces={true}
+                      contentContainerStyle={styles.scrollContentContainer}
+                      nestedScrollEnabled={true}
+                    >
+                      <View style={styles.resultContentContainer}>
+                        <Text style={styles.resultsTitle}>Analysis Results</Text>
+                        {Object.keys(classSummary).length >= 0 ? (
+                          <View style={styles.resultsList}>
+                            {/* Color legend */}
+                            <View style={styles.legendContainer}>
+                              <Text style={styles.legendTitle}>Detected Skin Conditions</Text>
+                              {Object.entries(classSummary).map(([condition, info], index) => (
+                                <View key={index} style={styles.legendRow}>
+                                  <View
+                                    style={[styles.legendColor, { backgroundColor: info.color }]}
+                                  />
+                                  <Text style={styles.legendText}>
+                                    {condition.charAt(0).toUpperCase() + condition.slice(1)}
+                                  </Text>
+                                  <View style={styles.countBadge}>
+                                    <Text style={styles.countText}>{info.count}</Text>
+                                  </View>
+                                </View>
+                              ))}
                             </View>
-                          ))}
-                        </View>
 
-                        <View style={styles.divider} />
+                            <View style={styles.divider} />
 
-                        <Text style={styles.recommendationsTitle}>Recommendations:</Text>
-                        <View style={styles.recommendationsContainer}>
-                          {isLoadingRecommendations ? (
-                            // Show shimmer placeholders while loading
-                            <>
-                              <ShimmerPlaceholder
-                                style={styles.shimmerPlaceholder}
-                                LinearGradient={LinearGradient}
-                                shimmerColors={['#333', '#444', '#333']}
-                              />
-                              <ShimmerPlaceholder
-                                style={styles.shimmerPlaceholder}
-                                LinearGradient={LinearGradient}
-                                shimmerColors={['#333', '#444', '#333']}
-                              />
-                              <ShimmerPlaceholder
-                                style={styles.shimmerPlaceholder}
-                                LinearGradient={LinearGradient}
-                                shimmerColors={['#333', '#444', '#333']}
-                              />
-                              <ShimmerPlaceholder
-                                style={styles.shimmerPlaceholder}
-                                LinearGradient={LinearGradient}
-                                shimmerColors={['#333', '#444', '#333']}
-                              />
-                            </>
-                          ) : (
-                            // Show actual recommendations when loaded
-                            recommendations.map((recommendation, index) => (
-                              <Text key={index} style={styles.recommendationText}>
-                                {recommendation}
-                              </Text>
-                            ))
-                          )}
-                        </View>
+                            {notice && (
+                              <View style={styles.noticeContainer}>
+                                <Text style={styles.noticeText}>{notice}</Text>
+                              </View>
+                            )}
+
+                            <Text style={styles.recommendationsTitle}>
+                              Đánh giá và khuyến nghị:
+                            </Text>
+                            <View style={styles.recommendationsContainer}>
+                              {isLoadingRecommendations ? (
+                                // Show shimmer placeholders while loading
+                                <>
+                                  <ShimmerPlaceholder
+                                    style={styles.shimmerPlaceholder}
+                                    LinearGradient={LinearGradient}
+                                    shimmerColors={['#333', '#444', '#333']}
+                                  />
+                                  <ShimmerPlaceholder
+                                    style={styles.shimmerPlaceholder}
+                                    LinearGradient={LinearGradient}
+                                    shimmerColors={['#333', '#444', '#333']}
+                                  />
+                                  <ShimmerPlaceholder
+                                    style={styles.shimmerPlaceholder}
+                                    LinearGradient={LinearGradient}
+                                    shimmerColors={['#333', '#444', '#333']}
+                                  />
+                                  <ShimmerPlaceholder
+                                    style={styles.shimmerPlaceholder}
+                                    LinearGradient={LinearGradient}
+                                    shimmerColors={['#333', '#444', '#333']}
+                                  />
+                                </>
+                              ) : (
+                                <>
+                                  {analysisResult && (
+                                    <>
+                                      <View style={styles.assessmentSection}>
+                                        <Text style={styles.assessmentTitle}>Tổng quan:</Text>
+                                        <Text style={styles.assessmentText}>
+                                          {analysisResult.result.tong_quan}
+                                        </Text>
+                                      </View>
+
+                                      <View style={styles.assessmentSection}>
+                                        <Text style={styles.assessmentTitle}>Mức độ:</Text>
+                                        <Text style={styles.assessmentText}>
+                                          {analysisResult.result.danh_gia_muc_do}
+                                        </Text>
+                                      </View>
+
+                                      <View style={styles.assessmentSection}>
+                                        <Text style={styles.assessmentTitle}>Chăm sóc cơ bản:</Text>
+                                        {analysisResult.result.cham_soc_co_ban.map((rec, index) => (
+                                          <Text key={index} style={styles.recommendationText}>
+                                            • {rec}
+                                          </Text>
+                                        ))}
+                                      </View>
+
+                                      <View style={styles.assessmentSection}>
+                                        <Text style={styles.assessmentTitle}>Khuyến cáo y tế:</Text>
+                                        <Text style={styles.recommendationText}>
+                                          • {analysisResult.result.khuyen_cao_y_te}
+                                        </Text>
+                                      </View>
+
+                                      <View style={styles.assessmentSection}>
+                                        <Text style={styles.assessmentTitle}>
+                                          Lưu ý quan trọng:
+                                        </Text>
+                                        {analysisResult.result.luu_y_quan_trong.map(
+                                          (note, index) => (
+                                            <Text key={index} style={styles.recommendationText}>
+                                              • {note}
+                                            </Text>
+                                          )
+                                        )}
+                                      </View>
+                                    </>
+                                  )}
+                                </>
+                              )}
+                            </View>
+                          </View>
+                        ) : (
+                          <Text style={styles.noResultsText}>No skin conditions detected.</Text>
+                        )}
                       </View>
-                    ) : (
-                      <Text style={styles.noResultsText}>No skin conditions detected.</Text>
-                    )}
+                    </ScrollView>
                   </View>
                 )}
-                <XStack gap={20} mx={10} justify="space-between">
-                  <Button
-                    flex={1}
-                    onPress={openChatInterface}
-                    icon={<LucideBotMessageSquare size={24} color="white" />}
-                  >
-                    Chat With AI
-                  </Button>
-                  <Button
-                    flex={1}
-                    onPress={() => router.navigate('/(root)/(home-tabs)')}
-                    icon={<LucideHome size={24} color="white" />}
-                  >
-                    Home
-                  </Button>
-                </XStack>
+
+                <View style={styles.buttonFooter}>
+                  <XStack gap={20} mx={10} justify="space-between">
+                    <Button
+                      flex={1}
+                      onPress={openChatInterface}
+                      icon={<LucideBotMessageSquare size={24} color="white" />}
+                    >
+                      Chat With AI
+                    </Button>
+                    <Button
+                      flex={1}
+                      onPress={() => router.navigate('/(root)/(home-tabs)')}
+                      icon={<LucideHome size={24} color="white" />}
+                    >
+                      Home
+                    </Button>
+                  </XStack>
+                </View>
               </View>
             </Animated.View>
           </View>
@@ -731,6 +828,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: variables.scale(8),
     paddingLeft: variables.scale(10),
+    lineHeight: 24,
   },
   noResultsText: {
     color: 'white',
@@ -740,7 +838,7 @@ const styles = StyleSheet.create({
   },
   resultContentContainer: {
     flex: 1,
-    marginBottom: variables.scale(100),
+    minHeight: 'auto',
   },
   doneButton: {
     justifyContent: 'flex-end',
@@ -778,24 +876,59 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: variables.scale(30),
     borderTopRightRadius: variables.scale(30),
     padding: variables.scale(20),
-    maxHeight: '65%',
-    paddingBottom: variables.scale(50),
+    height: '65%',
+    paddingBottom: variables.scale(100),
   },
   insideContainer: {
+    flex: 1,
     flexDirection: 'column',
-    minHeight: Dimensions.get('window').height * 0.3,
+    height: '100%',
   },
   panelIndicatorText: {
     color: '#999',
-    fontSize: 12,
+    fontSize: 14,
     textAlign: 'center',
     marginBottom: variables.scale(10),
   },
+  mainScrollContainer: {
+    flex: 1,
+    minHeight: 0,
+  },
+  scrollableContent: {
+    flex: 1,
+  },
+  scrollContentContainer: {
+    paddingBottom: variables.scale(20),
+    minHeight: '100%',
+  },
+  recommendationsContainer: {
+    marginTop: variables.scale(10),
+    paddingHorizontal: variables.scale(5),
+  },
+  shimmerPlaceholder: {
+    height: variables.scale(60),
+    borderRadius: variables.scale(8),
+    marginBottom: variables.scale(10),
+  },
+  assessmentSection: {
+    marginBottom: variables.scale(15),
+    paddingHorizontal: variables.scale(10),
+  },
+  assessmentTitle: {
+    color: '#4CAF50',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: variables.scale(8),
+  },
+  assessmentText: {
+    color: 'white',
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: variables.scale(5),
+  },
   legendContainer: {
     marginBottom: variables.scale(15),
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: variables.scale(10),
-    padding: variables.scale(15),
+    paddingHorizontal: variables.scale(10),
   },
   legendTitle: {
     color: 'white',
@@ -807,21 +940,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: variables.scale(8),
-    justifyContent: 'space-between',
+    paddingVertical: variables.scale(5),
   },
   legendColor: {
     width: variables.scale(16),
     height: variables.scale(16),
     borderRadius: variables.scale(8),
-    marginRight: variables.scale(10),
+    marginRight: variables.scale(12),
   },
   legendText: {
     color: 'white',
     fontSize: 16,
     flex: 1,
+    textTransform: 'capitalize',
   },
   countBadge: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: '#333',
     borderRadius: variables.scale(12),
     paddingHorizontal: variables.scale(8),
     paddingVertical: variables.scale(4),
@@ -830,23 +964,36 @@ const styles = StyleSheet.create({
   },
   countText: {
     color: 'white',
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: 'bold',
   },
   divider: {
     height: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: '#333',
     marginVertical: variables.scale(15),
+    marginHorizontal: variables.scale(10),
   },
-  recommendationsContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: variables.scale(10),
+  noticeContainer: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: variables.scale(8),
     padding: variables.scale(15),
+    marginHorizontal: variables.scale(10),
+    marginBottom: variables.scale(15),
+    borderLeftWidth: 4,
+    borderLeftColor: '#4CAF50',
   },
-  shimmerPlaceholder: {
-    height: 30,
-    width: '90%',
-    borderRadius: 16,
-    marginBottom: variables.scale(12),
+  noticeText: {
+    color: '#4CAF50',
+    fontSize: 14,
+    lineHeight: 20,
+    fontStyle: 'italic',
+  },
+  buttonFooter: {
+    position: 'absolute',
+    bottom: variables.scale(20),
+    left: 0,
+    right: 0,
+    paddingHorizontal: variables.scale(10),
+    backgroundColor: 'transparent',
   },
 });

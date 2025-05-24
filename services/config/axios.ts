@@ -44,6 +44,11 @@ const scanAPI: AxiosInstance = axios.create({
   headers: mediaHeaders,
 });
 
+const geminiAPI: AxiosInstance = axios.create({
+  baseURL: `${API_URL}/gemini`,
+  headers: defaultHeaders,
+});
+
 const trackerAPI: AxiosInstance = axios.create({
   baseURL: `${API_URL}/tracker`,
   headers: defaultHeaders,
@@ -90,6 +95,9 @@ talentManagementAPI.interceptors.response.use(responseInterceptor);
 authAPI.interceptors.request.use(requestInterceptor);
 authAPI.interceptors.response.use(responseInterceptor);
 
+geminiAPI.interceptors.request.use(requestInterceptor);
+geminiAPI.interceptors.response.use(responseInterceptor);
+
 function setupBearerAuthorization(token: string) {
   lmsAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
   talentManagementAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -97,6 +105,7 @@ function setupBearerAuthorization(token: string) {
   routineAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
   userAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
   scanAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
+  geminiAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
   trackerAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
   requestAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
   coupleAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -114,6 +123,7 @@ export {
   trackerAPI,
   requestAPI,
   coupleAPI,
+  geminiAPI,
 };
 
 export default lmsAPI;
