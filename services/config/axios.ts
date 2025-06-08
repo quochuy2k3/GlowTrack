@@ -68,6 +68,11 @@ const talentManagementAPI: AxiosInstance = axios.create({
   baseURL: `${API_URL}/talent-management`,
   headers: defaultHeaders,
 });
+
+const chatAPI: AxiosInstance = axios.create({
+  baseURL: 'https://gtn8n.app.n8n.cloud',
+  headers: defaultHeaders,
+});
 trackerAPI.interceptors.request.use(requestInterceptor);
 trackerAPI.interceptors.response.use(responseInterceptor);
 
@@ -98,6 +103,9 @@ authAPI.interceptors.response.use(responseInterceptor);
 geminiAPI.interceptors.request.use(requestInterceptor);
 geminiAPI.interceptors.response.use(responseInterceptor);
 
+chatAPI.interceptors.request.use(requestInterceptor);
+chatAPI.interceptors.response.use(responseInterceptor);
+
 function setupBearerAuthorization(token: string) {
   lmsAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
   talentManagementAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -109,6 +117,7 @@ function setupBearerAuthorization(token: string) {
   trackerAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
   requestAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
   coupleAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
+  chatAPI.defaults.headers.common.Authorization = `Bearer ${token}`;
 }
 
 export {
@@ -124,6 +133,7 @@ export {
   requestAPI,
   coupleAPI,
   geminiAPI,
+  chatAPI,
 };
 
 export default lmsAPI;

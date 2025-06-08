@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useRouter } from 'expo-router';
 import { useServices } from '@/services';
 
 export enum ScanState {
@@ -47,6 +48,7 @@ export interface AnalysisResponse {
 
 export const useScanLogic = () => {
   const service = useServices();
+  const router = useRouter();
 
   // State management
   const [scanState, setScanState] = useState<ScanState>(ScanState.CAMERA);
@@ -58,7 +60,6 @@ export const useScanLogic = () => {
   const [notice, setNotice] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
-  const [showChatModal, setShowChatModal] = useState(false);
 
   const resetScan = () => {
     setCapturedPhoto(null);
@@ -80,8 +81,13 @@ export const useScanLogic = () => {
     setScanState(ScanState.CAMERA);
   };
 
-  const openChatInterface = () => setShowChatModal(true);
-  const closeChatInterface = () => setShowChatModal(false);
+  const openChatInterface = () => {
+    router.push('/(root)/(modals)/chat');
+  };
+
+  const closeChatInterface = () => {
+    router.dismiss();
+  };
 
   const fetchGeminiRecommendations = async (result: ApiResponse) => {
     setIsLoadingRecommendations(true);
@@ -123,7 +129,6 @@ export const useScanLogic = () => {
     error,
     setError,
     isLoadingRecommendations,
-    showChatModal,
 
     // Actions
     resetScan,

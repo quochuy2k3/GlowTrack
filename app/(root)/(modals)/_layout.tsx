@@ -17,6 +17,13 @@ export default function Layout() {
           title: t('SignIn'),
         }}
       />
+      <Stack.Screen
+        name="chat"
+        options={{
+          title: 'GlowTrack AI Chat',
+          presentation: 'modal',
+        }}
+      />
     </Stack>
   );
 }

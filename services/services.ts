@@ -11,6 +11,7 @@ import * as ScanServices from './scan';
 import * as TrackerServices from './tracker';
 import * as RequestServices from './requests';
 import * as CoupleServices from './couple';
+import * as ChatServices from './chat';
 
 const services = {
   ...WidgetServices,
@@ -26,6 +27,7 @@ const services = {
   ...TrackerServices,
   ...RequestServices,
   ...CoupleServices,
+  ...ChatServices,
 };
 
 export default services;

@@ -1,12 +1,6 @@
 import React from 'react';
-import { SafeAreaView, Modal, StyleSheet } from 'react-native';
-import {
-  CameraScreen,
-  PreviewScreen,
-  ProcessingScreen,
-  ResultsScreen,
-  ChatInterface,
-} from './components';
+import { SafeAreaView, StyleSheet } from 'react-native';
+import { CameraScreen, PreviewScreen, ProcessingScreen, ResultsScreen } from './components';
 import { useScanLogic, useCameraCapture, useImageProcessing, ScanState } from './hooks';
 
 export default function ScanScreen() {
@@ -25,7 +19,6 @@ export default function ScanScreen() {
     error,
     setError,
     isLoadingRecommendations,
-    showChatModal,
     retakePhoto,
     openChatInterface,
     closeChatInterface,
@@ -120,23 +113,7 @@ export default function ScanScreen() {
     }
   };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      {renderContent()}
-
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={showChatModal}
-        onRequestClose={closeChatInterface}
-        statusBarTranslucent={true}
-      >
-        <SafeAreaView style={styles.modalContainer}>
-          <ChatInterface onClose={closeChatInterface} />
-        </SafeAreaView>
-      </Modal>
-    </SafeAreaView>
-  );
+  return <SafeAreaView style={styles.container}>{renderContent()}</SafeAreaView>;
 }
 
 const styles = StyleSheet.create({
@@ -144,9 +121,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'black',
     justifyContent: 'center',
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
   },
 });
