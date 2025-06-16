@@ -12,12 +12,6 @@ export default function Layout() {
       }}
     >
       <Stack.Screen
-        name="sign-in"
-        options={{
-          title: t('SignIn'),
-        }}
-      />
-      <Stack.Screen
         name="chat"
         options={{
           title: 'GlowTrack AI Chat',

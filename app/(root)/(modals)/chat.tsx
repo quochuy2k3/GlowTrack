@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'expo-router';
-import { ChatInterface } from '@/screens/ScanScreen/components';
+import ChatInterface from '@/screens/ScanScreen/components/ChatInterface/index';
 
 export default function ChatModal() {
   const router = useRouter();
