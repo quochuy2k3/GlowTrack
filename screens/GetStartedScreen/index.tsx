@@ -8,9 +8,6 @@ import { useRouter } from 'expo-router';
 import * as React from 'react';
 import Animated, {
   FadeIn,
-  FadeInDown,
-  FadeInUp,
-  SlideInDown,
   SlideInUp,
   ZoomIn,
   useAnimatedStyle,
@@ -27,32 +24,25 @@ const { width, height } = Dimensions.get('window');
 
 export default function GetStartedScreen() {
   const router = useRouter();
-
-  // Animation values
   const logoScale = useSharedValue(1);
   const titleOpacity = useSharedValue(0);
   const backgroundPosition = useSharedValue(-300);
 
-  // Start animations
   React.useEffect(() => {
-    // Subtle floating animation for logo
     logoScale.value = withRepeat(
       withSequence(
         withTiming(1.05, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
         withTiming(0.95, { duration: 2000, easing: Easing.inOut(Easing.ease) })
       ),
-      -1, // -1 = infinite repeat
-      true // reverse
+      -1,
+      true
     );
 
-    // Animate background
     backgroundPosition.value = withTiming(-280, { duration: 1500 });
 
-    // Animate title
     titleOpacity.value = withDelay(400, withTiming(1, { duration: 800 }));
   }, []);
 
-  // Define animated styles
   const animatedLogoStyle = useAnimatedStyle(() => ({
     transform: [{ scale: logoScale.value }],
   }));
@@ -110,7 +100,7 @@ export default function GetStartedScreen() {
                 pressStyle={{ opacity: 0.9 }}
                 onPress={() => router.push('/(signin)/(modals)/sign-in')}
               >
-                <Text style={styles.buttonText}>Sign Up</Text>
+                <Text style={styles.buttonText}>Sign In</Text>
               </Button>
             </View>
           </Animated.View>
@@ -129,7 +119,7 @@ export default function GetStartedScreen() {
                 pressStyle={{ opacity: 0.9 }}
                 onPress={() => router.push('/(signin)/sign-up')}
               >
-                <Text style={styles.buttonText}>Sign In</Text>
+                <Text style={styles.buttonText}>Sign Up</Text>
               </Button>
             </View>
           </Animated.View>
@@ -144,7 +134,6 @@ export default function GetStartedScreen() {
         </Animated.View>
       </View>
 
-      {/* Floating animated elements */}
       <Animated.View
         style={[styles.floatingElement, { top: height * 0.2, left: width * 0.1 }]}
         entering={FadeIn.duration(1000).delay(500)}

@@ -4,7 +4,12 @@
     "slug": "glow-track-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logoNoBg.png",
+    "splash": {
+      "image": "./assets/images/logoNoBg.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FEF6EB"
+    },
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "projectId": "bc3fdc48-68ad-42b3-966c-84c15b07d9dc",
@@ -24,8 +29,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/splash-icon.png",
+        "backgroundColor": "#FEF6EB"
       },
       "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
       "package": "com.anonymous.glowtrack",
@@ -34,7 +39,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/iconNoBg.png"
     },
     "plugins": [
       "expo-router",
@@ -50,9 +55,9 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
+          "imageWidth": 300,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#FEF6EB"
         }
       ],
       "expo-secure-store",

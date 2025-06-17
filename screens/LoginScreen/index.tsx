@@ -9,14 +9,12 @@ import {
   Animated,
   Dimensions,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useQuery } from 'react-query';
-import { Avatar, Spinner, XStack, YStack } from 'tamagui';
+import { Avatar, XStack, YStack } from 'tamagui';
 
 const height = Dimensions.get('window').height;
 
@@ -26,19 +24,6 @@ export default function LoginScreen() {
   const auth = useAuth();
   const time = new Date().getHours();
 
-  // const { data: currentCourse, isLoading: isLoadingCurrentCourse } = useQuery({
-  //   queryFn: services.UserCourseService.getCurrentLearnCourse,
-  //   queryKey: ['currentCourse'],
-  //   enabled: auth.isAuthenticated,
-  // });
-
-  // const { data: widgets, isLoading: isLoadingWidgets } = useQuery({
-  //   queryKey: ['widgets', ...homeWidgetCodes],
-  //   queryFn: () => services.WidgetService.findHome(homeWidgetCodes),
-  //   enabled: auth.isAuthenticated,
-  // });
-
-  // Animation for glowing text
   const opacity = useRef(new Animated.Value(1)).current;
   const headerTranslateY = useRef(new Animated.Value(0)).current;
 
@@ -67,24 +52,15 @@ export default function LoginScreen() {
     loopAnimation();
   }, [opacity]);
 
-  // Animation for header slide up
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
 
   const slideUpHeader = () => {
     Animated.timing(headerTranslateY, {
-      toValue: isHeaderHidden ? 0 : variables.scale(-450), // slide up or down
+      toValue: isHeaderHidden ? 0 : variables.scale(-450),
       duration: 340,
       useNativeDriver: true,
     }).start(() => setIsHeaderHidden(!isHeaderHidden));
   };
-
-  // if (isLoadingCurrentCourse || isLoadingWidgets || auth.isLoading) {
-  //   return (
-  //     <YStack justify="center" items="center">
-  //       <Spinner />
-  //     </YStack>
-  //   );
-  // }
 
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>

@@ -3,7 +3,7 @@ import { useFonts } from 'expo-font';
 import { Slot } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { TamaguiProvider } from 'tamagui';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -16,7 +16,8 @@ import { AppStateProvider } from '@/contexts/app-state';
 import '@/i18n';
 import { NotificationProvider } from '@/contexts/NoticationContext';
 import * as Notifications from 'expo-notifications';
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+import CustomSplashScreen from '@/screens/SplashScreen';
+
 SplashScreen.preventAutoHideAsync();
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -31,6 +32,7 @@ const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const [showCustomSplash, setShowCustomSplash] = useState(true);
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     agrifont: require('../assets/fonts/agrifont.ttf'),
@@ -53,6 +55,15 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
+  useEffect(() => {
+    // Hide custom splash screen after 4 seconds
+    const timer = setTimeout(() => {
+      setShowCustomSplash(false);
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   if (!loaded) {
     return null;
   }
@@ -65,7 +76,11 @@ export default function RootLayout() {
             <AuthProvider>
               <ServicesProvider>
                 <NotificationProvider>
-                  <Slot />
+                  {showCustomSplash ? (
+                    <CustomSplashScreen onFinish={() => setShowCustomSplash(false)} />
+                  ) : (
+                    <Slot />
+                  )}
                   <StatusBar style="auto" />
                 </NotificationProvider>
               </ServicesProvider>
