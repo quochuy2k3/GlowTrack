@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "glow-track-app",
+    "name": "Glow Track",
     "slug": "glow-track-app",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/logoNoBg.png",
     "splash": {
@@ -15,7 +15,9 @@
     "projectId": "bc3fdc48-68ad-42b3-966c-84c15b07d9dc",
     "newArchEnabled": true,
     "ios": {
+      "buildNumber": "1.0.2",
       "supportsTablet": true,
+      "displayName": "Glow Track",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "We need your location to show nearby places",
         "NSLocationAlwaysUsageDescription": "We need your location even in background.",
@@ -25,7 +27,7 @@
         },
         "ITSAppUsesNonExemptEncryption": false
       },
-      "bundleIdentifier": "com.anonymous.glowtrack"
+      "bundleIdentifier": "com.glowtrack.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -33,7 +35,7 @@
         "backgroundColor": "#FEF6EB"
       },
       "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
-      "package": "com.anonymous.glowtrack",
+      "package": "com.glowtrack.app",
       "googleServicesFile": "./google-services.json"
     },
     "web": {
@@ -46,8 +48,8 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow GlowTrack to access your camera",
-          "microphonePermission": "Allow GlowTrack to access your microphone",
+          "cameraPermission": "Allow Glow Track to access your camera",
+          "microphonePermission": "Allow Glow Track to access your microphone",
           "recordAudioAndroid": true
         }
       ],
@@ -83,10 +85,10 @@
               "appExtensions": [
                 {
                   "targetName": "OneSignalNotificationServiceExtension",
-                  "bundleIdentifier": "com.anonymous.glowtrack.OneSignalNotificationServiceExtension",
+                  "bundleIdentifier": "com.glowtrack.app.OneSignalNotificationServiceExtension",
                   "entitlements": {
                     "com.apple.security.application-groups": [
-                      "group.com.anonymous.glowtrack.onesignal"
+                      "group.com.glowtrack.app.onesignal"
                     ]
                   }
                 }
