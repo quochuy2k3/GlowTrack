@@ -126,10 +126,10 @@ export const useChat = () => {
 
   // Add quick responses
   const quickResponses = [
-    'Tình trạng da của tôi như thế nào?',
-    'Tôi nên dùng sản phẩm gì?',
+    'Chăm sóc da dầu',
+    'Có bao nhiêu chương',
     'Cách chăm sóc da hiệu quả?',
-    'Làm sao để ngăn ngừa mụn?',
+    'Bài hát tên gì?',
   ];
 
   const hideQuickResponses = useCallback(() => {

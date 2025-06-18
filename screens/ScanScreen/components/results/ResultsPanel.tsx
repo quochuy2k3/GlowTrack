@@ -77,7 +77,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
       style={[
         styles.resultsContent,
         {
-          height: isPanelOpen ? '65%' : closedPanelHeight,
+          height: isPanelOpen ? '70%' : closedPanelHeight,
           transform: [{ translateY: panY }],
         },
       ]}
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
     marginBottom: variables.scale(10),
   },
   recommendationsScrollView: {
-    maxHeight: variables.scale(200),
+    maxHeight: variables.scale(400),
     marginTop: variables.scale(10),
   },
   noResultsText: {

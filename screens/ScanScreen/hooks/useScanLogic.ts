@@ -32,13 +32,76 @@ export interface Assessment {
 }
 
 export interface SkinAnalysisResult {
-  assessment: Assessment;
-  cham_soc_co_ban: string[];
-  chi_tiet_mun: { [key: string]: string };
-  danh_gia_muc_do: string;
-  khuyen_cao_y_te: string;
-  luu_y_quan_trong: string[];
-  tong_quan: string;
+  // Legacy fields for backward compatibility
+  assessment?: Assessment;
+  cham_soc_co_ban?: string[];
+  chi_tiet_mun?: { [key: string]: string };
+  danh_gia_muc_do?: string;
+  khuyen_cao_y_te?: string;
+  luu_y_quan_trong?: string[];
+  tong_quan?: string;
+
+  // New comprehensive analysis structure
+  danh_gia_tong_quan?: {
+    loai_da?: string;
+    tinh_trang_chung?: string;
+    diem_manh?: string[];
+    diem_yeu?: string[];
+    muc_do_nghiem_trong?: string;
+  };
+
+  phan_tich_theo_vung?: {
+    vung_T?: string;
+    vung_U?: string;
+    vung_mat?: string;
+    vung_moi?: string;
+    vung_co?: string;
+  };
+
+  chi_tiet_van_de?: {
+    mun_trung_ca?: {
+      phan_tich_cu_the?: string;
+      nguyen_nhan_chinh?: string[];
+      do_nghiem_trong?: string;
+      xu_huong_phat_trien?: string;
+    };
+    van_de_khac?: {
+      lao_hoa?: string;
+      sac_to?: string;
+      do_am_dau?: string;
+      lo_chan_long?: string;
+    };
+  };
+
+  routine_cham_soc_cu_the?: {
+    buoi_sang?: string[];
+    buoi_toi?: string[];
+    cham_soc_dac_biet?: {
+      '2-3_lan_tuan'?: string[];
+      hang_thang?: string[];
+      luu_y_quan_trong?: string[];
+    };
+  };
+
+  ket_qua_mong_doi?: {
+    sau_2_tuan?: string;
+    sau_1_thang?: string;
+    sau_3_thang?: string;
+    chi_phi_uoc_tinh?: string;
+  };
+
+  canh_bao_va_khuyen_cao?: {
+    can_gap_bac_si?: string;
+    muc_do_khan_cap?: string;
+    co_the_tu_cham_soc?: string;
+    dau_hieu_theo_doi?: string[];
+  };
+
+  do_tin_cay_danh_gia?: {
+    phan_tram?: string;
+    han_che?: string[];
+    de_xuat_bo_sung?: string[];
+  };
 }
 
 export interface AnalysisResponse {

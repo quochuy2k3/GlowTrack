@@ -30,7 +30,6 @@ import QuickResponseBar from './components/QuickResponseBar';
 import FloatingActionButton from './components/FloatingActionButton';
 
 const ChatInterface = memo<ChatInterfaceProps>(({ onClose }) => {
-  // Hooks
   const {
     messages,
     inputText,
@@ -78,7 +77,6 @@ const ChatInterface = memo<ChatInterfaceProps>(({ onClose }) => {
 
   useEffect(() => {
     if (flatListRef.current && isTyping) {
-      // Scroll immediately when typing starts
       requestAnimationFrame(() => {
         setTimeout(() => {
           flatListRef.current?.scrollToEnd({ animated: true });
@@ -87,7 +85,6 @@ const ChatInterface = memo<ChatInterfaceProps>(({ onClose }) => {
     }
   }, [isTyping]);
 
-  // Handle scroll trigger from useChat hook
   useEffect(() => {
     if (shouldScrollToEnd && flatListRef.current) {
       requestAnimationFrame(() => {

@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
     left: '50%',
-    transform: [{ translateX: -36 }],
+    transform: [{ translateX: -39.5 }],
     zIndex: 10,
   },
   centerButton: {
