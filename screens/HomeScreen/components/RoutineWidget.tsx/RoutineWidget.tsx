@@ -20,6 +20,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from 'react-native';
 import { useQuery } from 'react-query';
 
@@ -36,6 +37,26 @@ interface Session {
 interface RoutineCardProps {
   onRefresh: MutableRefObject<() => void>;
 }
+
+// Loading Component
+const LoadingComponent = () => (
+  <View style={styles.loadingContainer}>
+    <View style={styles.loadingContent}>
+      <ActivityIndicator size="large" color="#007AFF" />
+      <Text style={styles.loadingText}>Đang tải thông tin routine...</Text>
+    </View>
+  </View>
+);
+
+// Error Component
+const ErrorComponent = ({ onRetry }: { onRetry: () => void }) => (
+  <View style={styles.errorContainer}>
+    <Text style={styles.errorText}>Không thể tải dữ liệu routine</Text>
+    <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
+      <Text style={styles.retryText}>Thử lại</Text>
+    </TouchableOpacity>
+  </View>
+);
 
 const RoutineCard = ({ onRefresh }: RoutineCardProps) => {
   const isFocused = useIsFocused();
@@ -82,10 +103,13 @@ const RoutineCard = ({ onRefresh }: RoutineCardProps) => {
     data: routineToday,
     isLoading: isLoadingRoutineDay,
     refetch: queryFn,
+    error: queryError,
   } = useQuery({
     queryFn: services.UserRoutineService.getRoutineToday,
     queryKey: ['routineToday'],
     enabled: auth.isAuthenticated,
+    retry: 3,
+    retryDelay: 1000,
   });
   useEffect(() => {
     if (onRefresh) {
@@ -101,7 +125,17 @@ const RoutineCard = ({ onRefresh }: RoutineCardProps) => {
     const animatedValue = animatedSessions[index];
     if (!animatedValue) return;
 
-    const isExpanded = animatedValue.__getValue() === 1;
+    const currentSessions = Object.keys(animatedSessions).reduce(
+      (acc, key) => {
+        const idx = parseInt(key);
+        acc[idx] = false;
+        return acc;
+      },
+      {} as { [key: number]: boolean }
+    );
+
+    const isExpanded = currentSessions[index];
+
     Animated.timing(animatedValue, {
       toValue: isExpanded ? 0 : 1,
       duration: 260,
@@ -137,66 +171,83 @@ const RoutineCard = ({ onRefresh }: RoutineCardProps) => {
   useEffect(() => {
     const fetchRoutineData = async () => {
       if (!routineToday) return;
-      console.log('testroutineToday', routineToday);
-      const now = new Date();
-      const sessions = routineToday.today.sessions;
 
-      const parseTime = (timeStr: string): Date => {
-        const match = timeStr.match(/(\d+):(\d+)\s?(AM|PM)/i);
-        if (!match) return new Date(0);
-        let [_, hourStr, minuteStr, period] = match;
-        let hour = parseInt(hourStr, 10);
-        const minute = parseInt(minuteStr, 10);
-        if (period.toUpperCase() === 'PM' && hour !== 12) hour += 12;
-        if (period.toUpperCase() === 'AM' && hour === 12) hour = 0;
+      try {
+        console.log('testroutineToday', routineToday);
 
-        const sessionDate = new Date(now);
-        sessionDate.setHours(hour, minute, 0, 0);
-        return sessionDate;
-      };
-
-      let selectedIndex: number | null = null;
-      let minDiff = Infinity;
-
-      sessions.forEach((session: Session, idx: number) => {
-        const sessionTime = parseTime(session.time);
-        const isFuture = sessionTime >= now;
-        if (session.status === 'pending' && isFuture) {
-          const diff = sessionTime.getTime() - now.getTime();
-          if (diff < minDiff) {
-            minDiff = diff;
-            selectedIndex = idx;
-          }
+        // Kiểm tra cấu trúc dữ liệu API response
+        let apiData: RoutineTodayResponse;
+        if ('data' in routineToday && routineToday.data) {
+          // Nếu có .data wrapper (AxiosResponse)
+          apiData = routineToday.data;
+        } else {
+          // Nếu không có .data wrapper
+          apiData = routineToday as unknown as RoutineTodayResponse;
         }
-      });
 
-      if (selectedIndex === null) {
-        minDiff = Infinity;
-        sessions.forEach((session: Session, idx: number) => {
+        const now = new Date();
+        const sessions = apiData.today.sessions;
+
+        const parseTime = (timeStr: string): Date => {
+          const match = timeStr.match(/(\d+):(\d+)\s?(AM|PM)/i);
+          if (!match) return new Date(0);
+          let [_, hourStr, minuteStr, period] = match;
+          let hour = parseInt(hourStr, 10);
+          const minute = parseInt(minuteStr, 10);
+          if (period.toUpperCase() === 'PM' && hour !== 12) hour += 12;
+          if (period.toUpperCase() === 'AM' && hour === 12) hour = 0;
+
+          const sessionDate = new Date(now);
+          sessionDate.setHours(hour, minute, 0, 0);
+          return sessionDate;
+        };
+
+        let selectedIndex: number | null = null;
+        let minDiff = Infinity;
+
+        sessions?.forEach((session: any, idx: number) => {
           const sessionTime = parseTime(session.time);
-          const diff = Math.abs(now.getTime() - sessionTime.getTime());
-          if (diff < minDiff) {
-            minDiff = diff;
-            selectedIndex = idx;
+          const isFuture = sessionTime >= now;
+          if (session.status === 'pending' && isFuture) {
+            const diff = sessionTime.getTime() - now.getTime();
+            if (diff < minDiff) {
+              minDiff = diff;
+              selectedIndex = idx;
+            }
           }
         });
-      }
 
-      setRoutineData(routineToday);
+        if (selectedIndex === null) {
+          minDiff = Infinity;
+          sessions?.forEach((session: any, idx: number) => {
+            const sessionTime = parseTime(session.time);
+            const diff = Math.abs(now.getTime() - sessionTime.getTime());
+            if (diff < minDiff) {
+              minDiff = diff;
+              selectedIndex = idx;
+            }
+          });
+        }
 
-      const animState: { [key: number]: Animated.Value } = {};
-      routineToday.today.sessions?.forEach((_: Session, idx: number) => {
-        animState[idx] = new Animated.Value(0);
-      });
-      setAnimatedSessions(animState);
+        // Set routine data
+        setRoutineData(apiData);
 
-      if (selectedIndex !== null) {
-        Animated.timing(animState[selectedIndex], {
-          toValue: 1,
-          duration: 300,
-          easing: Easing.out(Easing.ease),
-          useNativeDriver: false,
-        }).start();
+        const animState: { [key: number]: Animated.Value } = {};
+        apiData.today.sessions?.forEach((_: any, idx: number) => {
+          animState[idx] = new Animated.Value(0);
+        });
+        setAnimatedSessions(animState);
+
+        if (selectedIndex !== null) {
+          Animated.timing(animState[selectedIndex], {
+            toValue: 1,
+            duration: 300,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: false,
+          }).start();
+        }
+      } catch (error) {
+        console.error('Error processing routine data:', error);
       }
     };
 
@@ -225,33 +276,79 @@ const RoutineCard = ({ onRefresh }: RoutineCardProps) => {
     }
   };
 
-  if (!routineData) return <Text>Loading...</Text>;
+  if (isLoadingRoutineDay || !routineToday) {
+    return <LoadingComponent />;
+  }
 
-  const MarkDoneSession = async (session: Session, sessionIndex: number) => {
+  if (queryError) {
+    return <ErrorComponent onRetry={queryFn} />;
+  }
+
+  if (!routineData) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>Chưa có dữ liệu routine cho hôm nay</Text>
+        <TouchableOpacity style={styles.retryButton} onPress={() => queryFn()}>
+          <Text style={styles.retryText}>Tải lại</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const isWithinTimeRange = (sessionTime: string): boolean => {
+    const now = new Date();
+
+    const parseTime = (timeStr: string): Date => {
+      const match = timeStr.match(/(\d+):(\d+)\s?(AM|PM)/i);
+      if (!match) return new Date(0);
+      let [_, hourStr, minuteStr, period] = match;
+      let hour = parseInt(hourStr, 10);
+      const minute = parseInt(minuteStr, 10);
+      if (period.toUpperCase() === 'PM' && hour !== 12) hour += 12;
+      if (period.toUpperCase() === 'AM' && hour === 12) hour = 0;
+
+      const sessionDate = new Date(now);
+      sessionDate.setHours(hour, minute, 0, 0);
+      return sessionDate;
+    };
+
+    const sessionDateTime = parseTime(sessionTime);
+
+    const twoHoursBefore = new Date(sessionDateTime.getTime() - 2 * 60 * 60 * 1000);
+    const oneHourAfter = new Date(sessionDateTime.getTime() + 1 * 60 * 60 * 1000);
+
+    console.log(`Checking time range for session ${sessionTime}:`);
+    console.log(`Current time: ${now.toLocaleTimeString()}`);
+    console.log(`Session time: ${sessionDateTime.toLocaleTimeString()}`);
+    console.log(
+      `Valid from: ${twoHoursBefore.toLocaleTimeString()} to ${oneHourAfter.toLocaleTimeString()}`
+    );
+    console.log(`Is within range: ${now >= twoHoursBefore && now <= oneHourAfter}`);
+
+    return now >= twoHoursBefore && now <= oneHourAfter;
+  };
+
+  const MarkDoneSession = async (session: any, sessionIndex: number) => {
     try {
-      // Tạo bản sao của dữ liệu hiện tại
       if (!routineData) return;
 
       const updatedRoutineData = { ...routineData };
-      const updatedSessions = [...updatedRoutineData.today.sessions];
+      const updatedSessions = [...(updatedRoutineData.today.sessions || [])];
 
       // Cập nhật status thành "done"
       updatedSessions[sessionIndex] = {
         ...updatedSessions[sessionIndex],
-        status: 'done',
+        status: 'done' as const,
       };
 
       updatedRoutineData.today.sessions = updatedSessions;
 
-      // Cập nhật state và UI trước
       setRoutineData(updatedRoutineData);
 
-      // Tạo payload để cập nhật lên server
       const dayToUpdate = {
         day_of_week: routineData.today.day_of_week,
         sessions: updatedSessions.map(s => ({
           ...s,
-          // Đảm bảo session đang được cập nhật có status là 'done'
           status: s.time === session.time ? 'done' : s.status,
         })),
       };
@@ -259,16 +356,11 @@ const RoutineCard = ({ onRefresh }: RoutineCardProps) => {
       // Gọi API để cập nhật ngày lên server
       await services.UserRoutineService.updateDayofRoutine(dayToUpdate);
 
-      // Refresh dữ liệu từ server
       queryFn();
-
-      // Hiển thị thông báo thành công (tùy chọn)
-      // Alert.alert('Success', 'Session đã được đánh dấu hoàn thành');
     } catch (error) {
       console.error('Error marking session as done:', error);
       Alert.alert('Error', 'Không thể cập nhật trạng thái session');
 
-      // Nếu lỗi, refresh lại dữ liệu để đảm bảo UI đồng bộ với server
       queryFn();
     }
   };
@@ -296,7 +388,9 @@ const RoutineCard = ({ onRefresh }: RoutineCardProps) => {
             <View
               key={`${session.time}-${index}`}
               style={{
-                backgroundColor: getSessionBackgroundColor(session.status),
+                backgroundColor: getSessionBackgroundColor(
+                  session.status as 'pending' | 'done' | 'not_done'
+                ),
                 borderRadius: variables.scale(20),
                 marginBottom: variables.scale(16),
                 marginHorizontal: variables.scale(16),
@@ -306,19 +400,30 @@ const RoutineCard = ({ onRefresh }: RoutineCardProps) => {
               <TouchableOpacity
                 style={[
                   styles.session,
-                  { backgroundColor: getSessionBackgroundColor(session.status) },
+                  {
+                    backgroundColor: getSessionBackgroundColor(
+                      session.status as 'pending' | 'done' | 'not_done'
+                    ),
+                  },
                 ]}
                 onPress={() => toggleSession(index)}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <LucideClock size={20} color={getStatusBadgeColor(session.status)} />
+                  <LucideClock
+                    size={20}
+                    color={getStatusBadgeColor(session.status as 'pending' | 'done' | 'not_done')}
+                  />
                   <Text style={styles.sessionTime}>{session.time}</Text>
                   {session.status === 'done' && <Check size={18} color="#4CAF50" />}
                 </View>
                 <View
                   style={[
                     styles.statusBadge,
-                    { backgroundColor: getStatusBadgeColor(session.status) },
+                    {
+                      backgroundColor: getStatusBadgeColor(
+                        session.status as 'pending' | 'done' | 'not_done'
+                      ),
+                    },
                   ]}
                 >
                   <Text style={styles.statusText}>{session.status.toUpperCase()}</Text>
@@ -354,7 +459,11 @@ const RoutineCard = ({ onRefresh }: RoutineCardProps) => {
                         <View
                           style={[
                             styles.stepCircle,
-                            { backgroundColor: getStatusBadgeColor(session.status) },
+                            {
+                              backgroundColor: getStatusBadgeColor(
+                                session.status as 'pending' | 'done' | 'not_done'
+                              ),
+                            },
                           ]}
                         >
                           <Text style={styles.stepNumber}>{step.step_order}</Text>
@@ -365,14 +474,18 @@ const RoutineCard = ({ onRefresh }: RoutineCardProps) => {
                     </View>
                   ))}
                 </View>
-                {session.status === 'pending' && (
+                {/* Chỉ hiển thị nút mark done khi session là pending và trong khoảng thời gian cho phép */}
+                {session.status === 'pending' && isWithinTimeRange(session.time) && (
                   <TouchableOpacity
                     style={styles.markAsDoneContainer}
                     onPress={() => {
                       MarkDoneSession(session, index);
                     }}
                   >
-                    <Check size={24} color={getStatusBadgeColor(session.status)} />
+                    <Check
+                      size={24}
+                      color={getStatusBadgeColor(session.status as 'pending' | 'done' | 'not_done')}
+                    />
                   </TouchableOpacity>
                 )}
               </Animated.View>
@@ -456,7 +569,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: variables.scale(30),
-
     zIndex: 1,
   },
   verticalLine: {
@@ -493,6 +605,81 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: variables.scale(24),
     borderRadius: variables.scale(20),
+  },
+  loadingContainer: {
+    marginTop: variables.scale(16),
+    paddingVertical: variables.scale(40),
+    marginHorizontal: variables.scale(16),
+    borderRadius: variables.scale(24),
+    backgroundColor: commonColor.ColorWhite,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: variables.scale(8),
+    elevation: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: variables.scale(20),
+    fontSize: variables.scale(18),
+    fontWeight: '500',
+    color: 'gray',
+  },
+  errorContainer: {
+    marginTop: variables.scale(16),
+    paddingVertical: variables.scale(40),
+    marginHorizontal: variables.scale(16),
+    borderRadius: variables.scale(24),
+    backgroundColor: commonColor.ColorWhite,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: variables.scale(8),
+    elevation: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    marginBottom: variables.scale(20),
+    fontSize: variables.scale(18),
+    fontWeight: '500',
+    color: '#F44336',
+  },
+  retryButton: {
+    paddingVertical: variables.scale(12),
+    paddingHorizontal: variables.scale(24),
+    backgroundColor: '#007AFF',
+    borderRadius: variables.scale(8),
+  },
+  retryText: {
+    color: commonColor.ColorWhite,
+    fontSize: variables.scale(16),
+    fontWeight: '600',
+  },
+  emptyContainer: {
+    marginTop: variables.scale(16),
+    paddingVertical: variables.scale(40),
+    marginHorizontal: variables.scale(16),
+    borderRadius: variables.scale(24),
+    backgroundColor: commonColor.ColorWhite,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: variables.scale(8),
+    elevation: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    marginBottom: variables.scale(20),
+    fontSize: variables.scale(18),
+    fontWeight: '500',
+    color: 'gray',
   },
 });
 
